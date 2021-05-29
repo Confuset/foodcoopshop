@@ -42,6 +42,7 @@
     "webrtc-adapter": "^8.0.0"
   },
   "devDependencies": {
+    "cypress": "^7.4.0",
     "eslint": "^7.27.0"
   }
 }
