@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2021-02-20 22:41+0100\n"
+"POT-Creation-Date: 2021-04-27 17:06+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -257,6 +257,15 @@ msgstr ""
 msgid "Accepting_the_terms_of_use_have_been_saved."
 msgstr ""
 
+msgid "Your_email_address_was_already_activated_or_the_activation_code_was_not_valid."
+msgstr ""
+
+msgid "Your_email_address_has_been_activated_successfully."
+msgstr ""
+
+msgid "Your_email_address_has_been_activated_successfully._Your_password_has_been_sent_to_you."
+msgstr ""
+
 msgid "Request_new_password"
 msgstr ""
 
@@ -288,9 +297,6 @@ msgid "Signing_in_failed_account_inactive_or_password_wrong?"
 msgstr ""
 
 msgid "Member_{0}_created_an_account."
-msgstr ""
-
-msgid "Filename_Terms-of-use"
 msgstr ""
 
 msgid "Welcome"
@@ -528,12 +534,6 @@ msgid "Close_all_orders?"
 msgstr ""
 
 msgid "Really_close_all_orders?"
-msgstr ""
-
-msgid "Generate_orders_as_pdf?"
-msgstr ""
-
-msgid "Really_generate_orders_as_pdf?"
 msgstr ""
 
 msgid "Email_addresses"
@@ -834,6 +834,9 @@ msgid "To_which_member_should_the_ordered_product_{0}_of_{1}_be_assigned_to?"
 msgstr ""
 
 msgid "Please_select_new_member."
+msgstr ""
+
+msgid "Please_select_a_member."
 msgstr ""
 
 msgid "Amount_that_should_be_changed_to_member?"
@@ -1341,12 +1344,6 @@ msgid "Action_Log_Member_deposit_deleted"
 msgstr ""
 
 msgid "Action_Log_Manufacturer_deposit_deleted"
-msgstr ""
-
-msgid "Action_Log_Member_member_fee_added"
-msgstr ""
-
-msgid "Action_Log_Member_member_fee_deleted"
 msgstr ""
 
 msgid "Action_Log_Blog_post_added"
@@ -1874,9 +1871,6 @@ msgstr ""
 msgid "Credit"
 msgstr ""
 
-msgid "Member_fee"
-msgstr ""
-
 msgid "weekly"
 msgstr ""
 
@@ -1908,6 +1902,9 @@ msgid "{0}_takes_a_break_on_{1}."
 msgstr ""
 
 msgid "Mobile"
+msgstr ""
+
+msgid "Phone"
 msgstr ""
 
 msgid "Email"
@@ -1958,9 +1955,6 @@ msgstr ""
 msgid "Payment_type_payback"
 msgstr ""
 
-msgid "Payment_type_member_fee"
-msgstr ""
-
 msgid "Empty_glasses"
 msgstr ""
 
@@ -2000,9 +1994,6 @@ msgstr ""
 msgid "price_will_be_adapted."
 msgstr ""
 
-msgid "route_news"
-msgstr ""
-
 msgid "route_all_products"
 msgstr ""
 
@@ -2021,9 +2012,6 @@ msgstr ""
 msgid "Modified_on"
 msgstr ""
 
-msgid "Go_to_blog_from"
-msgstr ""
-
 msgid "by"
 msgstr ""
 
@@ -2037,12 +2025,6 @@ msgid "of_{0}"
 msgstr ""
 
 msgid "found"
-msgstr ""
-
-msgid "Show_Blog_post"
-msgstr ""
-
-msgid "Go_to_manufacturer"
 msgstr ""
 
 msgid "Your_cart_is_empty"
@@ -2117,9 +2099,6 @@ msgstr ""
 msgid "City"
 msgstr ""
 
-msgid "Phone"
-msgstr ""
-
 msgid "Want_to_receive_reminder_emails?"
 msgstr ""
 
@@ -2142,9 +2121,6 @@ msgid "Your_accout_was_created_but_not_activated_which_means_you_cannot_login_ye
 msgstr ""
 
 msgid "You_will_get_an_email_as_soon_as_we_activated_you."
-msgstr ""
-
-msgid "News_from"
 msgstr ""
 
 msgid "Imprint"
@@ -2279,9 +2255,6 @@ msgstr ""
 msgid "Bank_account_credit_balance"
 msgstr ""
 
-msgid "Bank_account_member_fee"
-msgstr ""
-
 msgid "Attention_delivery_break!"
 msgstr ""
 
@@ -2385,6 +2358,9 @@ msgid "Your_account_at_{0}_has_just_been_activated."
 msgstr ""
 
 msgid "Your_registration_at_{0}_has_just_been_successful!"
+msgstr ""
+
+msgid "Please_confirm_your_email_address"
 msgstr ""
 
 msgid "Dear_responsible_person_for_new_members,"

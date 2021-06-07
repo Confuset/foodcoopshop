@@ -16,7 +16,7 @@ foodcoopshop.Mobile = {
     getSlidebarMenu: function (side) {
         var responsiveMenu = $('<ul/>');
         responsiveMenu.addClass('sb-slidebar sb-' + side); // for css
-        responsiveMenu.attr('off-canvas', 'sb-' + side + ' ' + side + ' push');
+        responsiveMenu.attr('off-canvas', 'sb-' + side + ' ' + side + ' overlay');
         return responsiveMenu;
     },
 
@@ -27,6 +27,19 @@ foodcoopshop.Mobile = {
         return showResponsiveMenuButton;
     },
 
+    changeToogleIcon : function(isSlidebarVisible) {
+        var iconElement = $('.sb-toggle-left').find('i');
+        var iconOpen = 'fa-bars';
+        var iconClosed = 'fa-times';
+        if (isSlidebarVisible) {
+            iconElement.removeClass(iconOpen);
+            iconElement.addClass(iconClosed);
+        } else {
+            iconElement.removeClass(iconClosed);
+            iconElement.addClass(iconOpen);
+        }
+    },
+
     bindToggleLeft : function (controller) {
         $('.sb-toggle-left').on('click', function (event) {
             event.preventDefault();
@@ -34,8 +47,10 @@ foodcoopshop.Mobile = {
             controller.toggle('sb-left', function () {
                 if ($('.sb-left').css('display') == 'block') {
                     $('body').addClass('slidebar-left-visible');
+                    foodcoopshop.Mobile.changeToogleIcon(true);
                 } else {
                     $('body').removeClass('slidebar-left-visible');
+                    foodcoopshop.Mobile.changeToogleIcon(false);
                 }
             });
         });
@@ -45,6 +60,7 @@ foodcoopshop.Mobile = {
         $(controller.events).on('opened', function (event, id) {
             $('html').on('click', function () {
                 controller.close(id);
+                foodcoopshop.Mobile.changeToogleIcon(false);
             });
             $('.sb-slidebar > *').on('click', function (event) {
                 event.stopPropagation();
@@ -149,7 +165,7 @@ foodcoopshop.Mobile = {
         });
 
         // button renaming
-        $('.entity-wrapper .btn').html('<i class="fa fa-lg fa-shopping-bag"></i>');
+        $('.entity-wrapper .btn').html('<i class="fa fa-lg fa-fw fa-shopping-bag"></i>');
 
         // move flash message into header
         $('#' + headerId).append($('#flashMessage'));

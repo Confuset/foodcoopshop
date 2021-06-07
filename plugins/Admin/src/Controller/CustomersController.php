@@ -11,7 +11,6 @@ use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\ForbiddenException;
-use Cake\ORM\Query;
 use Cake\Utility\Hash;
 
 /**
@@ -435,6 +434,9 @@ class CustomersController extends AdminAppController
         $this->setRequest($this->getRequest()->withData('Customers.address_customer.firstname', $this->getRequest()->getData('Customers.firstname')));
         $this->setRequest($this->getRequest()->withData('Customers.address_customer.lastname', $this->getRequest()->getData('Customers.lastname')));
 
+        $this->setRequest($this->getRequest()->withoutData('Customers.active'));
+        $this->setRequest($this->getRequest()->withoutData('Customers.id_default_group'));
+
         $customer = $this->Customer->patchEntity(
             $customer,
             $this->getRequest()->getData(),
@@ -483,7 +485,7 @@ class CustomersController extends AdminAppController
                 $this->renewAuthSession();
             }
 
-            $this->redirect($this->getRequest()->getData('referer'));
+            $this->redirect($this->getPreparedReferer());
         }
 
         $this->set('customer', $customer);
@@ -514,14 +516,8 @@ class CustomersController extends AdminAppController
             ]
         ])->first();
 
-        $this->Customer->save(
-            $this->Customer->patchEntity(
-                $customer,
-                [
-                    'active' => $status
-                ]
-                )
-            );
+        $customer->active = $status;
+        $this->Customer->save($customer);
 
         $message = __d('admin', 'The_member_{0}_has_been_deactivated_succesfully.', ['<b>' . $customer->name . '</b>']);
         $actionLogType = 'customer_set_inactive';
@@ -540,7 +536,7 @@ class CustomersController extends AdminAppController
             ->setViewVars([
                 'appAuth' => $this->AppAuth,
                 'data' => $customer,
-                'newPassword' => $newPassword
+                'newPassword' => $newPassword,
             ]);
 
             if (Configure::read('app.termsOfUseEnabled')) {
@@ -673,30 +669,6 @@ class CustomersController extends AdminAppController
         }
         $this->set('active', $active);
 
-        $validOrdersCountFrom = ''; // default value
-        if (!empty($this->getRequest()->getQuery('validOrdersCountFrom'))) {
-            $validOrdersCountFrom = h($this->getRequest()->getQuery('validOrdersCountFrom'));
-        }
-        $this->set('validOrdersCountFrom', $validOrdersCountFrom);
-
-        $validOrdersCountTo = ''; // default value
-        if (!empty($this->getRequest()->getQuery('validOrdersCountTo'))) {
-            $validOrdersCountTo = h($this->getRequest()->getQuery('validOrdersCountTo'));
-        }
-        $this->set('validOrdersCountTo', $validOrdersCountTo);
-
-        $dateFrom = '';
-        if (! empty($this->getRequest()->getQuery('dateFrom'))) {
-            $dateFrom = h($this->getRequest()->getQuery('dateFrom'));
-        }
-        $this->set('dateFrom', $dateFrom);
-
-        $dateTo = '';
-        if (! empty($this->getRequest()->getQuery('dateTo'))) {
-            $dateTo = h($this->getRequest()->getQuery('dateTo'));
-        }
-        $this->set('dateTo', $dateTo);
-
         $year = h($this->getRequest()->getQuery('year'));
         if (!in_array('year', array_keys($this->getRequest()->getQueryParams()))) {
             $year = date('Y');
@@ -718,26 +690,10 @@ class CustomersController extends AdminAppController
 
         $this->Customer->dropManufacturersInNextFind();
 
-        $validOrderDetailsConditions = [];
-        if ($dateFrom != '') {
-            $validOrderDetailsConditions[] = 'DATE_FORMAT(ValidOrderDetails.pickup_day, \'%Y-%m-%d\') >= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($dateFrom).'\'';
-        }
-        if ($dateTo != '') {
-            $validOrderDetailsConditions[] = 'DATE_FORMAT(ValidOrderDetails.pickup_day, \'%Y-%m-%d\') <= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($dateTo).'\'';
-        }
         $query = $this->Customer->find('all', [
             'conditions' => $conditions,
             'contain' => [
                 'AddressCustomers', // to make exclude happen using dropManufacturersInNextFind
-                'ValidOrderDetails' => function (Query $query) use($validOrderDetailsConditions) {
-                    $query->select([
-                        'valid_order_detail_count' => $query->func()->count('ValidOrderDetails.id_order_detail'),
-                        'ValidOrderDetails.id_customer',
-                    ])
-                    ->group(['ValidOrderDetails.id_customer'])
-                    ->where($validOrderDetailsConditions);
-                    return $query;
-                }
             ]
         ]);
 
@@ -765,6 +721,7 @@ class CustomersController extends AdminAppController
                     $customer->timebased_currency_credit_balance = $this->TimebasedCurrencyOrderDetail->getCreditBalance(null, $customer->id_customer);
                 }
             }
+            $customer->order_detail_count = $this->OrderDetail->getCountByCustomerId($customer->id_customer);
             $customer->last_order_date = $this->OrderDetail->getLastOrderDate($customer->id_customer);
             $customer->member_fee = $this->OrderDetail->getMemberFee($customer->id_customer, $year);
             $i ++;

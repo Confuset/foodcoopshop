@@ -107,7 +107,7 @@ foreach ($payments as $payment) {
                 ]
             );
         echo '</td>';
-        echo '<td>';
+        echo '<td style="text-align:right;width:51px;">';
         switch ($payment->approval) {
             case -1:
                 echo '<i class="fas fa-minus-circle not-ok payment-approval"></i>';
@@ -141,7 +141,7 @@ foreach ($payments as $payment) {
         echo $additionalText;
     echo '</td>';
 
-    echo '<td style="text-align:right;width:135px;">';
+    echo '<td style="text-align:right;width:140px;">';
         echo $payment->date_add->i18nFormat(Configure::read('app.timeHelper')->getI18Format('DateNTimeLongWithSecs'));
     echo '</td>';
 
@@ -152,7 +152,7 @@ foreach ($payments as $payment) {
     echo '</td>';
 
     if ($useCsvUpload) {
-        echo '<td style="text-align:right;width:135px;">';
+        echo '<td style="text-align:right;width:140px;">';
             if ($payment->date_transaction_add) {
                 echo $payment->date_transaction_add->i18nFormat(Configure::read('app.timeHelper')->getI18Format('DateNTimeLongWithSecs'));
             }
@@ -166,9 +166,6 @@ foreach ($payments as $payment) {
     if ($showTextColumn) {
         echo '<td>';
         switch ($paymentType) {
-            case 'member_fee':
-                echo $this->Html->getMemberFeeTextForFrontend($payment->text);
-                break;
             case 'deposit':
                 echo $this->Html->getManufacturerDepositPaymentText($payment->text);
                 break;

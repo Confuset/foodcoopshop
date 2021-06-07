@@ -5,6 +5,8 @@ namespace Admin\Controller;
 use App\Lib\Csv\RaiffeisenBankingReader;
 use App\Mailer\AppMailer;
 use Cake\Core\Configure;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Exception\PersistenceFailedException;
 
@@ -37,6 +39,12 @@ class ReportsController extends AdminAppController
         return $this->AppAuth->isSuperadmin() && Configure::read('app.htmlHelper')->paymentIsCashless();
     }
 
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        $this->FormProtection->setConfig('unlockedActions', ['payments']);
+    }
+
     private function handleCsvUpload()
     {
 
@@ -51,6 +59,7 @@ class ReportsController extends AdminAppController
             $reader = RaiffeisenBankingReader::createFromString($content);
             try {
                 $csvRecords = $reader->getPreparedRecords($reader->getRecords());
+                $this->Flash->success(__d('admin', 'Upload_successful._Please_select_the_records_you_want_to_import_and_then_click_save_button.'));
             } catch(\Exception $e) {
                 $this->Flash->error(__d('admin', 'The_uploaded_file_is_not_valid.'));
                 $this->redirect($this->referer());
@@ -72,11 +81,14 @@ class ReportsController extends AdminAppController
             $csvPayments = $this->Payment->newEntities(
                 $csvRecords,
                 [
-                    'validate' => 'csvImport',
-                ]
+                    'validate' => 'csvImportUpload',
+                ],
             );
 
             try {
+
+                $paymentsHaveErrors = false;
+
                 foreach($csvPayments as &$csvPayment) {
 
                     if (!isset($csvPayment->selected)) {
@@ -85,24 +97,38 @@ class ReportsController extends AdminAppController
                             $csvPayment->selected = false;
                         }
                     }
-
                     $csvPayment = $this->Payment->patchEntity(
                         $csvPayment,
                         [
                             'date_transaction_add' => new FrozenTime($csvPayment->date),
                             'approval' => APP_ON,
-                            'id_customer' => $csvPayment->original_id_customer == 0 ? $csvPayment->id_customer : $csvPayment->original_id_customer,
+                            'id_customer' => $csvPayment->id_customer ?? $csvPayment->original_id_customer,
                             'transaction_text' => $csvPayment->content,
                             'created_by' => $this->AppAuth->getUserId(),
-                        ]
+                        ],
+                        [
+                            'validate' => 'csvImportSave',
+                        ],
                     );
 
+                    if ($csvPayment->selected && $csvPayment->hasErrors()) {
+                        $paymentsHaveErrors |= true;
+                    }
+
                 }
-                if ($saveRecords) {
+
+                $this->set('csvPayments', $csvPayments);
+
+                if ($paymentsHaveErrors && $saveRecords) {
+                    $this->Flash->error(__d('admin', 'Errors_while_saving!'));
+                }
+
+                if (!$paymentsHaveErrors && $saveRecords) {
 
                     $this->Payment->getConnection()->transactional(function () use ($csvPayments) {
 
                         $i = 0;
+                        $sumAmount = 0;
                         foreach($csvPayments as $csvPayment) {
                             if ($csvPayment->isDirty('selected') && $csvPayment->getOriginal('selected') == 0) {
                                 unset($csvPayments[$i]);
@@ -112,6 +138,7 @@ class ReportsController extends AdminAppController
                                         'id_customer' => $csvPayment->id_customer,
                                     ]
                                 ])->first();
+                                $sumAmount += $csvPayment->amount;
                                 $email = new AppMailer();
                                 $email->viewBuilder()->setTemplate('Admin.credit_csv_upload_successful');
                                 $email->setTo($customer->email)
@@ -135,7 +162,10 @@ class ReportsController extends AdminAppController
 
                         $success = $this->Payment->saveManyOrFail($csvPayments);
                         if ($success) {
-                            $message = __d('admin', '{0,plural,=1{1_record_was} other{#_records_were}_successfully_imported.', [count($csvPayments)]);
+                            $message = __d('admin', '{0,plural,=1{1_record_was} other{#_records_were}_successfully_imported._Sum:_{1}', [
+                                count($csvPayments),
+                                '<b>' . Configure::read('app.numberHelper')->formatAsCurrency($sumAmount) . '</b>',
+                            ]);
                             $this->Flash->success($message);
                             $this->ActionLog = $this->getTableLocator()->get('ActionLogs');
                             $this->ActionLog->customSave('payment_product_csv_imported', $this->AppAuth->getUserId(), 0, 'payments', $message);
@@ -143,10 +173,6 @@ class ReportsController extends AdminAppController
                         }
 
                     });
-
-                } else {
-                    $this->Flash->success(__d('admin', 'Upload_successful._Please_select_the_records_you_want_to_import_and_then_click_save_button.'));
-                    $this->set('csvPayments', $csvPayments);
                 }
             } catch(PersistenceFailedException $e) {
                 $this->Flash->error(__d('admin', 'Errors_while_saving!'));
@@ -183,8 +209,6 @@ class ReportsController extends AdminAppController
         $conditions = [
             'Payments.type' => $paymentType
         ];
-        $conditions[] = 'DATE_FORMAT(Payments.date_add, \'%Y-%m-%d\') >= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($dateFrom) . '\'';
-        $conditions[] = 'DATE_FORMAT(Payments.date_add, \'%Y-%m-%d\') <= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($dateTo) . '\'';
 
         if ($customerId != '') {
             $conditions['Payments.id_customer'] = $customerId;
@@ -204,6 +228,12 @@ class ReportsController extends AdminAppController
             ]
         ]);
 
+        $query->where(function (QueryExpression $exp) use ($dateFrom, $dateTo) {
+            $exp->gte('DATE_FORMAT(Payments.date_add, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate($dateFrom));
+            $exp->lte('DATE_FORMAT(Payments.date_add, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate($dateTo));
+            return $exp;
+        });
+
         $payments = $this->paginate($query, [
             'order' => [
                 'Payments.date_add' => 'DESC'
@@ -214,6 +244,6 @@ class ReportsController extends AdminAppController
         $this->set('customersForDropdown', $this->Payment->Customers->getForDropdown());
         $this->set('title_for_layout', __d('admin', 'Report') . ': ' . Configure::read('app.htmlHelper')->getPaymentText($paymentType));
         $this->set('paymentType', $paymentType);
-        $this->set('showTextColumn', in_array($paymentType, ['member_fee', 'deposit']));
+        $this->set('showTextColumn', $paymentType == 'deposit');
     }
 }

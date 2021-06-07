@@ -68,6 +68,10 @@ abstract class AppCakeTestCase extends TestCase
         $this->resetLogs();
         $this->Configuration->loadConfigurations();
 
+        // enable security token only for IntegrationTests
+        if (method_exists($this, 'enableSecurityToken')) {
+            $this->enableSecurityToken();
+        }
     }
 
     private function getLogFile($name)
@@ -266,7 +270,6 @@ abstract class AppCakeTestCase extends TestCase
                 'Carts.id_cart' => $cartId
             ],
             'contain' => [
-                'CartProducts.OrderDetails.OrderDetailTaxes',
                 'CartProducts.OrderDetails.OrderDetailUnits',
                 'CartProducts.OrderDetails.TimebasedCurrencyOrderDetails',
             ]

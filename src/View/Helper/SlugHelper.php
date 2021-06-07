@@ -32,6 +32,11 @@ class SlugHelper extends Helper
         return $url;
     }
 
+    public function getActivateEmailAddress($activationCode)
+    {
+        return '/customers/activateEmailAddress/' . $activationCode;
+    }
+
     public function getActionLogsList()
     {
         return $this->getAdminHome().'/action-logs';
@@ -55,11 +60,6 @@ class SlugHelper extends Helper
     public function getManufacturerDetail($manufacturerId, $manufacturerName)
     {
         return '/'.__('route_manufacturer_detail').'/'.$manufacturerId.'-'.StringComponent::slugify($manufacturerName);
-    }
-
-    public function getManufacturerBlogList($manufacturerId, $manufacturerName)
-    {
-        return $this->getManufacturerDetail($manufacturerId, $manufacturerName) . '/' . __('route_news');
     }
 
     public function getPageDetail($pageId, $name)
@@ -170,6 +170,11 @@ class SlugHelper extends Helper
         return '/' . __('route_new_products');
     }
 
+    public function getProductSearch($keyword)
+    {
+        return '/' . __('route_search') . '?' . $keyword;
+    }
+
     public function getAllProducts()
     {
         return $this->getCategoryDetail(Configure::read('app.categoryAllProducts'), __('route_all_products'));
@@ -244,11 +249,6 @@ class SlugHelper extends Helper
     public function getTimebasedCurrencyPaymentAdd($customerId)
     {
         return '/admin/timebased-currency-payments/add/' . $customerId;
-    }
-
-    public function getMyMemberFeeBalance()
-    {
-        return '/admin/payments/myMemberFee';
     }
 
     public function getMyCreditBalance()

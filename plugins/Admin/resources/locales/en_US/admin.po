@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-02-23 15:33+0100\n"
-"PO-Revision-Date: 2021-02-23 15:34+0100\n"
+"POT-Creation-Date: 2021-04-27 17:06+0200\n"
+"PO-Revision-Date: 2021-04-27 17:06+0200\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
@@ -414,9 +414,6 @@ msgstr "The amount was added to the credit system of {0} and can be deleted ther
 msgid "The_amount_was_added_to_the_deposit_account_of_{0}_and_can_be_deleted_there."
 msgstr "The amount was added to the deposit account of {0} and can be deleted there."
 
-msgid "The_amount_was_added_to_the_member_fee_system_of_{0}_and_can_be_deleted_there."
-msgstr "The amount was added to the member fee system of {0} and can be deleted there."
-
 msgid "The_payment_({0}_{1})_was_removed_successfully."
 msgstr "The payment ({0}, {1}) was removed successfully."
 
@@ -585,8 +582,8 @@ msgstr "Your transaction ({0}) was added to the credit system."
 msgid "No_records_were_imported."
 msgstr "No records were imported."
 
-msgid "{0,plural,=1{1_record_was} other{#_records_were}_successfully_imported."
-msgstr "{0,plural,=1{1 record was} other{# records were}} successfully imported."
+msgid "{0,plural,=1{1_record_was} other{#_records_were}_successfully_imported._Sum:_{1}"
+msgstr "{0,plural,=1{1 record was} other{# records were}} successfully imported.  Sum: {1}"
 
 msgid "Upload_successful._Please_select_the_records_you_want_to_import_and_then_click_save_button."
 msgstr "Upload successful. Please select the records you want to import and then click the save button."
@@ -792,8 +789,11 @@ msgstr "Chose manufacturer"
 msgid "Blog_post_manufacturer_description"
 msgstr "If the manufacturer is only shown for signed in members, this is also the case for the blog post (ignoring the setting for the blog post)."
 
-msgid "Show_on_homepage"
-msgstr "Show on home page"
+msgid "Show_on_startpage_until"
+msgstr "Show on start page until"
+
+msgid "Leave_empty_to_never_show_blog_post_on_start_page."
+msgstr "Leave empty to never show blog post on start page."
 
 msgid "Only_for_members"
 msgstr "Only for members"
@@ -821,9 +821,6 @@ msgstr "all members"
 
 msgid "all_manufacturers"
 msgstr "all manufacturers"
-
-msgid "Homepage"
-msgstr "Homepage"
 
 msgid "Modified_by"
 msgstr "Modified by"
@@ -1008,9 +1005,6 @@ msgstr "I want to use my smartphone's camera for barcode scanning."
 msgid "Delete_member_irrevocably?"
 msgstr "Delete account irrevocably?"
 
-msgid "Last_pickup_day"
-msgstr "Last pickup day"
-
 msgid "Show_all_years"
 msgstr "Show all years"
 
@@ -1029,6 +1023,9 @@ msgstr "Reminder"
 msgid "Register_date"
 msgstr "Register date"
 
+msgid "Last_pickup_day"
+msgstr "Last pickup day"
+
 msgid "Comment_abbreviation"
 msgstr "Comm."
 
@@ -1040,6 +1037,9 @@ msgstr "Show all orders from {0}"
 
 msgid "Change_group"
 msgstr "Change group"
+
+msgid "This_email_address_is_not_yet_activated_you_can_activate_it_here_{0}."
+msgstr "This e-mail address is not yet activated. You can <a href=\"{0}\">activate it here</a> and by doing that you approve the registration in the name of the member."
 
 msgid "deactivate"
 msgstr "deactivate"
@@ -1140,6 +1140,15 @@ msgstr "Returned deposit by member"
 msgid "All_amounts_in_{0}."
 msgstr "All amounts in {0}."
 
+msgid "Tax_overview_cash"
+msgstr "Tax overview cash"
+
+msgid "Tax_overview_cashless"
+msgstr "Tax overview cashless"
+
+msgid "Tax_overview_total"
+msgstr "Tax overview total"
+
 msgid "Download_invoices"
 msgstr "Download invoices"
 
@@ -1172,15 +1181,6 @@ msgstr "Cancellation"
 
 msgid "Total_sum"
 msgstr "Total sum"
-
-msgid "Tax_overview_cash"
-msgstr "Tax overview cash"
-
-msgid "Tax_overview_cashless"
-msgstr "Tax overview cashless"
-
-msgid "Tax_overview_total"
-msgstr "Tax overview total"
 
 msgid "Pickup_day"
 msgstr "Pickup day"
@@ -1599,15 +1599,6 @@ msgstr "Email preview"
 msgid "Comment"
 msgstr "Comment"
 
-msgid "Add_transfered_member_fee"
-msgstr "Add transfered member fee"
-
-msgid "Delete_payment?"
-msgstr "Delete payment?"
-
-msgid "Back_to_member_overview"
-msgstr "Back to member overview"
-
 msgid "docs_route_credit_system"
 msgstr "credit-system"
 
@@ -1622,6 +1613,9 @@ msgstr "Delete upload?"
 
 msgid "Your_credit_balance"
 msgstr "Your credit balance"
+
+msgid "Back_to_member_overview"
+msgstr "Back to member overview"
 
 msgid "chose_manufacturer..."
 msgstr "chose manufacturer..."
@@ -1725,6 +1719,9 @@ msgstr "Add deposit"
 msgid "Add_deposit_amount_for_{0}"
 msgstr "Add deposit amount for {0}"
 
+msgid "Add_deposit_amount_for"
+msgstr "Add deposit amount for"
+
 msgid "Please_add_value_of_empty_glasses__that_is_taken_back_by_manufacturer."
 msgstr "Please add the value of empty glasses that are taken back by the manufacturer."
 
@@ -1779,9 +1776,6 @@ msgstr "BIC"
 msgid "Order_adaptions"
 msgstr "Order adaptions"
 
-msgid "Deposit_returns"
-msgstr "Deposit returns"
-
 msgid "My_data"
 msgstr "My data"
 
@@ -1833,6 +1827,12 @@ msgstr "Give the manufacturer feedback for the product"
 msgid "Show_all_ordered_products_from_{0}"
 msgstr "Show all ordered products from {0}"
 
+msgid "Order_state"
+msgstr "Order state"
+
+msgid "Order_date"
+msgstr "Order date"
+
 msgid "products_picked_up"
 msgstr "Products picked up"
 
@@ -1868,9 +1868,6 @@ msgstr "Please enter the amount that you just transfered to our bank account."
 
 msgid "If_payback_please_add_amount_that_you_transfered_back_to_the_bank_account_of_the_member."
 msgstr "If you chose \"payback\", please enter the amount that you just transfered back to the bank account of the user."
-
-msgid "Please_chose_the_months_for_your_payment."
-msgstr "Please chose the months for your payment."
 
 msgid "Upload_CSV_file_with_bank_transactions"
 msgstr "Upload CSV file with bank transactions"
@@ -2052,9 +2049,6 @@ msgstr "Why has the product been assigned to another member?"
 msgid "sorry,_{0}_can_not_be_delivered."
 msgstr "sorry, the product \"{0}\" can not be delivered."
 
-msgid "Order_date"
-msgstr "Order date"
-
 msgid "Why_has_the_product_been_cancelled?"
 msgstr "Why has the product been cancelled?"
 
@@ -2225,6 +2219,28 @@ msgstr "The delivered weight will eventually be adapted, so the price can change
 
 msgid "Product_ID"
 msgstr "ProductID"
+
+#~ msgid "The_amount_was_added_to_the_member_fee_system_of_{0}_and_can_be_deleted_there."
+#~ msgstr "The amount was added to the member fee system of {0} and can be deleted there."
+
+#~ msgid "Add_transfered_member_fee"
+#~ msgstr "Add transfered member fee"
+
+#~ msgid "Delete_payment?"
+#~ msgstr "Delete payment?"
+
+#~ msgid "Please_chose_the_months_for_your_payment."
+#~ msgstr "Please chose the months for your payment."
+
+#, fuzzy
+#~ msgid "Show_on_startpage"
+#~ msgstr "Show on home page"
+
+#~ msgid "Homepage"
+#~ msgstr "Homepage"
+
+#~ msgid "Deposit_returns"
+#~ msgstr "Deposit returns"
 
 #~ msgid "Invoice_number_abbreviation_of_cancelled_invoice"
 #~ msgstr "Cancelled invoice nº"

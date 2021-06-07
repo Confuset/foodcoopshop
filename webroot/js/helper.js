@@ -33,7 +33,11 @@ foodcoopshop.Helper = {
         }
     },
 
-    initCookieBanner() {
+    initCookieBanner: function() {
+        // IE breaks with GdprCookieConsentBanner
+        if (window.document.documentMode) {
+            return;
+        }
         var options = {
             cookieName: 'fcs-cookie-banner',
             heading: foodcoopshop.LocalizedJs.helper.ThisPageUsesCookies,
@@ -145,14 +149,11 @@ foodcoopshop.Helper = {
         }
         if ((prevElement || nextElement)) {
             $('#inner-content .prev-next-button.bottom').first().before($('<hr style="clear:both;" />'));
-            if (productsAvailable) {
-                $(afterContainerTop).after($('<hr style="clear:both;" />'));
-            }
         }
     },
 
     initBootstrapSelect : function(container) {
-        container.find('select').each(function () {
+        container.find('select:not(.no-bootstrap-select)').each(function () {
             var options = {
                 liveSearch: true,
                 showIcon: true,
@@ -255,12 +256,12 @@ foodcoopshop.Helper = {
         $(selector).append('<div class="swiper-wrapper"></div>');
         $(selector).find('.swiper-wrapper').append(slides);
 
-        var mySwiper = new Swiper(selector, {
+        new Swiper(selector, {
             loop: false,
             speed: 300,
             centeredSlides: true,
             slidesPerView: 2,
-            spaceBetween: 5,
+            spaceBetween: 16,
             navigation: {
                 nextEl: '.swiper-button-next',
                 prevEl: '.swiper-button-prev'
@@ -271,7 +272,7 @@ foodcoopshop.Helper = {
                     centeredSlides: true,
                     slidesPerView: 1,
                     initialSlide: 0,
-                    spaceBetween: 6
+                    spaceBetween: 16
                 }
             }
         });
@@ -481,17 +482,28 @@ foodcoopshop.Helper = {
 
     onWindowResize: function () {
 
-        // adapt height of cart
-        var difference = 146;
-        var loadLastOrderDetailsDropdown = $('#cart #load-last-order-details');
-        if (loadLastOrderDetailsDropdown.length > 0) {
-            difference += loadLastOrderDetailsDropdown.closest('.input').height();
+        var difference = 0;
+
+        // whole page is called in iframe in instant-order-mode
+        var instantOrderIframe = window.parent.$('#instant-order-add .modal-body iframe');
+        if (instantOrderIframe.length > 0) {
+            difference = 149;
+            difference += $('.instant-order-customer-info').height();
+            newCartHeight = instantOrderIframe.height();
+        } else {
+            difference = 146;
+            var loadLastOrderDetailsDropdown = $('#cart #load-last-order-details');
+            if (loadLastOrderDetailsDropdown.length > 0) {
+                difference += loadLastOrderDetailsDropdown.closest('.input').height();
+            }
+            var globalNoDeliveryDayBox = $('#global-no-delivery-day-box');
+            if (globalNoDeliveryDayBox.length > 0) {
+                difference += globalNoDeliveryDayBox.height();
+            }
+            var newCartHeight = $(window).height();
         }
-        var globalNoDeliveryDayBox = $('#global-no-delivery-day-box');
-        if (globalNoDeliveryDayBox.length > 0) {
-            difference += globalNoDeliveryDayBox.height();
-        }
-        $('#cart p.products').css('max-height', parseInt($(window).height()) - difference);
+
+        $('#cart p.products').css('max-height', parseInt(newCartHeight) - difference);
 
     },
 
@@ -510,7 +522,7 @@ foodcoopshop.Helper = {
         $('.menu.horizontal li').mouseenter(function () {
             $(this).children('ul').stop(true).animate({
                 opacity: 'toggle'
-            }, 500);
+            }, 300);
         }).mouseleave(function () {
             $(this).children('ul').stop(true).animate({
                 opacity: 'toggle'
@@ -706,7 +718,7 @@ foodcoopshop.Helper = {
 
         this.destroyCkeditor(name);
 
-        CKEDITOR.timestamp = 'v4.16.0';
+        CKEDITOR.timestamp = 'v4.16.1';
         $('textarea#' + name + '.ckeditor').ckeditor({
             customConfig: '/js/ckeditor/config.js',
             startupFocus : startupFocus
@@ -735,7 +747,7 @@ foodcoopshop.Helper = {
 
         this.destroyCkeditor(name);
 
-        CKEDITOR.timestamp = 'v4.16.0';
+        CKEDITOR.timestamp = 'v4.16.1';
         $('textarea#' + name + '.ckeditor').ckeditor({
             customConfig: '/js/ckeditor/config-big.js'
         });
@@ -750,7 +762,7 @@ foodcoopshop.Helper = {
 
         this.destroyCkeditor(name);
 
-        CKEDITOR.timestamp = 'v4.16.0';
+        CKEDITOR.timestamp = 'v4.16.1';
         $('textarea#' + name + '.ckeditor').ckeditor({
             customConfig: '/js/ckeditor/config-small-with-upload.js'
         });

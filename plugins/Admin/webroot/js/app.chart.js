@@ -16,103 +16,115 @@ foodcoopshop.AppChart = {
     color: '#cccccc', // default color
 
     barChartOptions : {
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(ctx) {
+                        return foodcoopshop.Helper.formatFloatAsCurrency(ctx.parsed.y);
+                    }
+                }
+            }
+        },
         datasetStrokeWidth : 1,
         scaleOverride: true,
         scaleStartValue: 0,
         scaleGridLineColor: 'rgba(0,0,0,.15)',
-        tooltips: {
-            callbacks: {
-                label: function(item, data) {
-                    var value = data.datasets[item.datasetIndex].data[item.index];
-                    return foodcoopshop.Helper.formatFloatAsCurrency(value);
-                }
-            }
-        },
-        legend: {
-            display: false
-        },
         scales: {
-            xAxes: [{
-                gridLines: {
+            x: {
+                grid: {
                     display: false
                 },
                 ticks: {
                     autoSkip: false,
                     maxRotation: 90,
-                    minRotation: 90
+                    minRotation: 90,
+                    labelOffset: -5
                 }
-            }],
-            yAxes: [{
+            },
+            y: {
+                beginAtZero: true,
                 ticks: {
-                    beginAtZero: true,
                     callback: function(value, index, values) {
                         return foodcoopshop.Helper.formatFloatAsCurrency(value);
                     }
                 }
-            }]
+            }
         }
     },
 
     pieChartOptions : {
-        cutoutPercentage: 25,
-        rotation: 10,
-        legend: {
-            display: false
+        cutout: 65,
+        aspectRatio: 5 / 3,
+        layout: {
+            padding: 50
         },
-        tooltips: {
-            callbacks: {
-                label: function(item, data) {
-                    var label = data.labels[item.index];
-                    var value = data.datasets[item.datasetIndex].data[item.index];
-                    return label + ': ' + foodcoopshop.Helper.formatFloatAsCurrency(value);
+        rotation: -30,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(ctx) {
+                        return ctx.label + ': ' + foodcoopshop.Helper.formatFloatAsCurrency(ctx.parsed);
+                    }
+                }
+            },
+            legend: {
+                display: false
+            },
+            datalabels: {
+                formatter: function(value, ctx) {
+                    var sum = 0;
+                    var dataArr = ctx.chart.data.datasets[0].data;
+                    dataArr.map(function(data) {
+                        sum += data;
+                    });
+                    var percentage = (value * 100 / sum).toFixed(0);
+                    if (percentage > 2) {
+                        return percentage + '%';
+                    }
+                    return '';
+                },
+                color: '#fff',
+                labels: {
+                    title: {
+                        font: {
+                            size: 15
+                        }
+                    }
                 }
             }
-        },
-        pieceLabel: [
-            {
-                render: 'label',
-                fontSize: 14,
-                textShadow: true,
-                position: 'outside',
-                fontColor: '#333',
-                textMargin: 4,
-            },
-            {
-                render: 'percentage',
-                fontSize: 14,
-                fontColor: '#fff',
-                textShadow: true,
-            }
-
-        ],
+        }
     },
 
     lineChartOptions : {
-        legend: {
-            display: false
-        },
-        tooltips: {
-            callbacks: {
-                label: function(item, data) {
-                    var value = data.datasets[item.datasetIndex].data[item.index];
-                    return foodcoopshop.Helper.formatFloatAsCurrency(value);
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(ctx) {
+                        return foodcoopshop.Helper.formatFloatAsCurrency(ctx.parsed.y);
+                    }
                 }
             }
         },
         scales: {
-            xAxes: [{
-                gridLines: {
+            x: {
+                grid: {
                     display: false
-                },
-            }],
-            yAxes: [{
+                }
+            },
+            y: {
+                beginAtZero: true,
                 ticks: {
-                    beginAtZero: true,
                     callback: function(value, index, values) {
                         return foodcoopshop.Helper.formatFloatAsCurrency(value);
                     }
                 }
-            }]
+            }
         }
     },
 
@@ -136,7 +148,7 @@ foodcoopshop.AppChart = {
         };
 
         var ctx = $('#myLineChart').get(0).getContext('2d');
-        var myNewChart = new Chart(ctx, {
+        new Chart(ctx, {
             responsive : true,
             type: 'line',
             data: lineChartData,
@@ -187,10 +199,10 @@ foodcoopshop.AppChart = {
         };
 
         var lineChartOptions = this.lineChartOptions;
-        lineChartOptions.legend.display = true;
+        lineChartOptions.plugins.legend.display = true;
 
         var ctx = $('#myLineChart').get(0).getContext('2d');
-        var myNewChart = new Chart(ctx, {
+        new Chart(ctx, {
             responsive : true,
             type: 'line',
             data: lineChartData,
@@ -212,7 +224,7 @@ foodcoopshop.AppChart = {
         };
 
         var ctx = $('#myBarChart').get(0).getContext('2d');
-        var myNewChart = new Chart(ctx, {
+        new Chart(ctx, {
             responsive : true,
             type: 'bar',
             data: barChartData,
@@ -230,12 +242,39 @@ foodcoopshop.AppChart = {
                 backgroundColor: backgroundColorPieChart,
                 hoverBackgroundColor: this.color,
                 borderWidth: 1,
+                datalabels: {
+                    labels: {
+                        outer: {
+                            align: 'end',
+                            anchor: 'end',
+                            color: '#333333',
+                            font: {
+                                size: 15
+                            },
+                            formatter: function(value, ctx) {
+                                var sum = 0;
+                                var dataArr = ctx.chart.data.datasets[0].data;
+                                dataArr.map(function(data) {
+                                    sum += data;
+                                });
+                                var percentage = (value * 100 / sum);
+                                if (percentage > 0.7) {
+                                    return ctx.chart.data.labels[ctx.dataIndex];
+                                }
+                                return '';
+                            },
+                            offset: 15,
+                        }
+                    }
+                }
+
             }],
             labels: labelsPieChart,
         };
 
         var ctx = $('#myPieChart').get(0).getContext('2d');
-        var myNewChart = new Chart(ctx, {
+        new Chart(ctx, {
+            plugins: [ChartDataLabels],
             responsive : true,
             type: 'pie',
             data: pieChartData,

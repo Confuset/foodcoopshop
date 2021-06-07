@@ -28,7 +28,7 @@
     opacity: .5 ! important;
     z-index: 99991;
 }
-.modal-dialog .btn {
+.modal-dialog .btn:not(.dropdown-toggle) {
     font-size: 15px ! important;
     padding: 6px 10px ! important;
 }
@@ -91,8 +91,13 @@ body.iframe_start_page {
     border: none;
 }
 #order-detail-customer-edit-form .bootstrap-select,
-#modal-product-attribute-add .bootstrap-select {
+#payment-deposit-add .bootstrap-select,
+#modal-product-attribute-add .bootstrap-select,
+#payment-deposit-add .input.select {
     width: 100% ! important;
+}
+#payment-deposit-add .bootstrap-select {
+    margin-bottom: 10px;
 }
 .modal .categories-checkboxes,
 .modal .tax-dropdown-wrapper {
@@ -100,6 +105,7 @@ body.iframe_start_page {
 }
 .modal .cke {
     width: 100% ! important;
+    float: none;
 }
 #modal-product-add .textarea-wrapper,
 #modal-product-name-edit .textarea-wrapper {
@@ -108,7 +114,7 @@ body.iframe_start_page {
 }
 .modal.add-payment-form label {
     display: block;
-    font-weight: bold;
+    font-weight: 600;
 }
 .modal.add-payment-form .datepicker {
     text-align: right;
@@ -268,7 +274,7 @@ body.iframe_start_page {
     margin-top: 5px ! important;
     float: left;
     margin-bottom: 5px;
-    font-weight: bold;
+    font-weight: 600;
 }
 #modal-product-price-edit .price-per-unit-wrapper,
 #modal-product-price-edit .price-wrapper {

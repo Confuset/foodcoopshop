@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-02-23 15:33+0100\n"
-"PO-Revision-Date: 2021-02-23 15:33+0100\n"
+"POT-Creation-Date: 2021-04-27 17:06+0200\n"
+"PO-Revision-Date: 2021-04-27 17:06+0200\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
 "Language: de_DE\n"
@@ -414,9 +414,6 @@ msgstr "Der Betrag ist im Guthaben-System von {0} eingetragen worden und kann do
 msgid "The_amount_was_added_to_the_deposit_account_of_{0}_and_can_be_deleted_there."
 msgstr "Der Betrag ist im Pfandkonto von {0} eingetragen worden und kann dort wieder gelöscht werden."
 
-msgid "The_amount_was_added_to_the_member_fee_system_of_{0}_and_can_be_deleted_there."
-msgstr "Der Betrag ist im Mitgliedsbeitrags-System von {0} eingetragen worden und kann dort wieder gelöscht werden."
-
 msgid "The_payment_({0}_{1})_was_removed_successfully."
 msgstr "Die Zahlung ({0}, {1}) wurde erfolgreich gelöscht."
 
@@ -585,11 +582,11 @@ msgstr "Deine Überweisung ({0}) wurde ins Guthaben-System übernommen."
 msgid "No_records_were_imported."
 msgstr "Es wurden keine Überweisungen importiert."
 
-msgid "{0,plural,=1{1_record_was} other{#_records_were}_successfully_imported."
-msgstr "{0,plural,=1{Ein Datensatz wurde} other{# Datensätze wurden}} erfolgreich importiert."
+msgid "{0,plural,=1{1_record_was} other{#_records_were}_successfully_imported._Sum:_{1}"
+msgstr "{0,plural,=1{Ein Datensatz wurde} other{# Datensätze wurden}} erfolgreich importiert. Summe: {1}"
 
 msgid "Upload_successful._Please_select_the_records_you_want_to_import_and_then_click_save_button."
-msgstr "Upload erfolgreich. Bitte wähle die Überweisungen aus, die du importieren möchtest und klicke dann auf \"Speichern\"."
+msgstr "Upload erfolgreich. Bitte wähle die Überweisungen aus, die du importieren möchtest und klicke dann auf Speichern."
 
 msgid "Report"
 msgstr "Bericht"
@@ -792,8 +789,11 @@ msgstr "Hersteller auswählen"
 msgid "Blog_post_manufacturer_description"
 msgstr "Falls der Hersteller nur für Mitglieder angezeigt wird, gilt das auch für diesen Blog-Artikel (unabhängig von der eigenen Einstellung \"nur für Mitglieder\")."
 
-msgid "Show_on_homepage"
-msgstr "Auf der Startseite anzeigen"
+msgid "Show_on_startpage_until"
+msgstr "Auf Startseite anzeigen bis"
+
+msgid "Leave_empty_to_never_show_blog_post_on_start_page."
+msgstr "Leeres Feld bedeutet: der Blog-Artikel wird nicht auf der Startseite angezeigt."
 
 msgid "Only_for_members"
 msgstr "Nur für Mitglieder"
@@ -821,9 +821,6 @@ msgstr "alle Mitglieder"
 
 msgid "all_manufacturers"
 msgstr "alle Hersteller"
-
-msgid "Homepage"
-msgstr "Homepage"
 
 msgid "Modified_by"
 msgstr "Geändert von"
@@ -1008,9 +1005,6 @@ msgstr "Ich möchte die Kamera meines Smartphones zum Scannen der Barcodes benut
 msgid "Delete_member_irrevocably?"
 msgstr "Mitgliedskonto unwiderruflich löschen?"
 
-msgid "Last_pickup_day"
-msgstr "Letzter Abholtag"
-
 msgid "Show_all_years"
 msgstr "Alle Jahre anzeigen"
 
@@ -1029,6 +1023,9 @@ msgstr "Erinnerung"
 msgid "Register_date"
 msgstr "Reg.-Datum"
 
+msgid "Last_pickup_day"
+msgstr "Letzter Abholtag"
+
 msgid "Comment_abbreviation"
 msgstr "Komm."
 
@@ -1040,6 +1037,9 @@ msgstr "Alle Bestellungen von {0} anzeigen"
 
 msgid "Change_group"
 msgstr "Gruppe ändern"
+
+msgid "This_email_address_is_not_yet_activated_you_can_activate_it_here_{0}."
+msgstr "Diese E-Mail-Adresse wurde vom Mitglied noch nicht aktiviert. Du kannst sie <a href=\"{0}\">hier aktivieren</a> und bestätigst damit die Registrierung für das Mitglied."
 
 msgid "deactivate"
 msgstr "deaktivieren"
@@ -1140,6 +1140,15 @@ msgstr "Pfand-Rückgaben (Mitglieder)"
 msgid "All_amounts_in_{0}."
 msgstr "Alle Beträge in {0}."
 
+msgid "Tax_overview_cash"
+msgstr "Steuerübersicht bar"
+
+msgid "Tax_overview_cashless"
+msgstr "Steuerübersicht unbar"
+
+msgid "Tax_overview_total"
+msgstr "Steuerübersicht Gesamt"
+
 msgid "Download_invoices"
 msgstr "Rechnungen downloaden"
 
@@ -1172,15 +1181,6 @@ msgstr "Stornierung"
 
 msgid "Total_sum"
 msgstr "Gesamtsumme"
-
-msgid "Tax_overview_cash"
-msgstr "Steuerübersicht bar"
-
-msgid "Tax_overview_cashless"
-msgstr "Steuerübersicht unbar"
-
-msgid "Tax_overview_total"
-msgstr "Steuerübersicht Gesamt"
 
 msgid "Pickup_day"
 msgstr "Abholtag"
@@ -1354,7 +1354,7 @@ msgid "CC_recipient_for_order_lists"
 msgstr "CC-Empfänger für Bestell-Listen-Versand"
 
 msgid "Separate_multiple_emails_with_comma."
-msgstr "Mehrere Empfänger mit , trennen."
+msgstr "Mehrere mit , trennen."
 
 msgid "Only_works_if_order_lists_by_email_is_checked."
 msgstr "Funktioniert nur, wenn \"Bestelllisten per E-Mail\" angehakt ist."
@@ -1599,15 +1599,6 @@ msgstr "E-Mail-Vorschau"
 msgid "Comment"
 msgstr "Kommentar"
 
-msgid "Add_transfered_member_fee"
-msgstr "Eingezahlten Mitgliedsbeitrag eintragen"
-
-msgid "Delete_payment?"
-msgstr "Zahlung löschen?"
-
-msgid "Back_to_member_overview"
-msgstr "Zurück zur Mitglieder-Übersicht"
-
 msgid "docs_route_credit_system"
 msgstr "guthaben-system"
 
@@ -1622,6 +1613,9 @@ msgstr "Aufladung löschen?"
 
 msgid "Your_credit_balance"
 msgstr "Dein Kontostand"
+
+msgid "Back_to_member_overview"
+msgstr "Zurück zur Mitglieder-Übersicht"
 
 msgid "chose_manufacturer..."
 msgstr "Hersteller auswählen..."
@@ -1717,13 +1711,16 @@ msgid "Delete"
 msgstr "Löschen"
 
 msgid "Add_deposit_amount"
-msgstr "Pfand-Betrag eintragen"
+msgstr "Pfand eintragen"
 
 msgid "Add_deposit"
 msgstr "Pfand eintragen"
 
 msgid "Add_deposit_amount_for_{0}"
-msgstr "Pfand-Betrag für {0} eintragen"
+msgstr "Pfand für {0} eintragen"
+
+msgid "Add_deposit_amount_for"
+msgstr "Pfand eintragen für"
 
 msgid "Please_add_value_of_empty_glasses__that_is_taken_back_by_manufacturer."
 msgstr "Bitte trage hier den Wert des Leergebindes ein, das vom Hersteller zurückgenommen wird."
@@ -1779,9 +1776,6 @@ msgstr "BIC"
 msgid "Order_adaptions"
 msgstr "Bestelländerungen"
 
-msgid "Deposit_returns"
-msgstr "Pfand-Rückgaben"
-
 msgid "My_data"
 msgstr "Meine Daten"
 
@@ -1833,6 +1827,12 @@ msgstr "Gib dem Hersteller Feedback zum Produkt"
 msgid "Show_all_ordered_products_from_{0}"
 msgstr "Alle bestellten Produkte von {0} anzeigen"
 
+msgid "Order_state"
+msgstr "Bestellstatus"
+
+msgid "Order_date"
+msgstr "Bestelldatum"
+
 msgid "products_picked_up"
 msgstr "Produkte abgeholt"
 
@@ -1868,9 +1868,6 @@ msgstr "Bitte trage hier den Betrag ein, den du soeben auf unser Konto überwies
 
 msgid "If_payback_please_add_amount_that_you_transfered_back_to_the_bank_account_of_the_member."
 msgstr "Wenn es sich um eine Rückzahlung handelt, trage bitte ein, wie viel du dem Mitgiled zurücküberwiesen hast."
-
-msgid "Please_chose_the_months_for_your_payment."
-msgstr "Bitte wähle die Monate aus, für die deine Zahlung gedacht ist."
 
 msgid "Upload_CSV_file_with_bank_transactions"
 msgstr "CSV-Datei mit Überweisungen hochladen"
@@ -2052,9 +2049,6 @@ msgstr "Warum wurde das Produkt auf ein anderes Mitglied umgebucht?"
 msgid "sorry,_{0}_can_not_be_delivered."
 msgstr "Das Produkt \"{0}\" kann leider nicht geliefert werden."
 
-msgid "Order_date"
-msgstr "Bestelldatum"
-
 msgid "Why_has_the_product_been_cancelled?"
 msgstr "Warum wurde das Produkt storniert?"
 
@@ -2149,7 +2143,7 @@ msgid "please_find_two_order_lists_attached_for_the_next_delivery_(grouped_by_pr
 msgstr "im Anhang findest du zwei Bestelllisten (gruppiert nach Produkt und Mitglied) für die nächste Lieferung."
 
 msgid "Your_personal_manufacturer_panel"
-msgstr "Dein persönlicher Hersteller-Bereich:"
+msgstr "Dein persönlicher Hersteller-Bereich"
 
 msgid "Help_pages"
 msgstr "Online-Hilfe"
@@ -2225,6 +2219,27 @@ msgstr "Das tatsächlich gelieferte Gewicht wird evtl. noch angepasst, d. h. der
 
 msgid "Product_ID"
 msgstr "Produkt-Nr."
+
+#~ msgid "The_amount_was_added_to_the_member_fee_system_of_{0}_and_can_be_deleted_there."
+#~ msgstr "Der Betrag ist im Mitgliedsbeitrags-System von {0} eingetragen worden und kann dort wieder gelöscht werden."
+
+#~ msgid "Add_transfered_member_fee"
+#~ msgstr "Eingezahlten Mitgliedsbeitrag eintragen"
+
+#~ msgid "Delete_payment?"
+#~ msgstr "Zahlung löschen?"
+
+#~ msgid "Please_chose_the_months_for_your_payment."
+#~ msgstr "Bitte wähle die Monate aus, für die deine Zahlung gedacht ist."
+
+#~ msgid "Show_on_startpage"
+#~ msgstr "Auf Startseite anzeigen"
+
+#~ msgid "Homepage"
+#~ msgstr "Homepage"
+
+#~ msgid "Deposit_returns"
+#~ msgstr "Pfand-Rückgaben"
 
 #~ msgid "Invoice_number_abbreviation_of_cancelled_invoice"
 #~ msgstr "Stornierte Rechnung Nr."

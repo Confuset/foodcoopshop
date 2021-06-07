@@ -7,6 +7,7 @@ use App\Lib\PdfWriter\TermsOfUsePdfWriter;
 use App\Mailer\AppMailer;
 use Cake\Auth\DefaultPasswordHasher;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Event\EventInterface;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\Cookie;
 use Cake\I18n\Date;
@@ -30,6 +31,14 @@ use Cake\Http\Exception\NotFoundException;
  */
 class CustomersController extends FrontendController
 {
+
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        if ($this->getRequest()->getUri()->getPath() == Configure::read('app.slugHelper')->getLogin()) {
+            $this->FormProtection->setConfig('validate', false);
+        }
+    }
 
     public function profileImage()
     {
@@ -96,6 +105,55 @@ class CustomersController extends FrontendController
             $this->renewAuthSession();
             $this->redirect($this->referer());
         }
+    }
+
+    public function activateEmailAddress()
+    {
+        $emailActivationCode = h($this->getRequest()->getParam('pass')[0]);
+
+        if (!isset($emailActivationCode)) {
+            throw new RecordNotFoundException('activation code not passed');
+        }
+
+        $this->Customer = $this->getTableLocator()->get('Customers');
+        $customer = $this->Customer->find('all', [
+            'conditions' => [
+                'Customers.activate_email_code' => $emailActivationCode,
+            ],
+            'contain' => [
+                'AddressCustomers',
+            ]
+        ])->first();
+
+        if (empty($customer)) {
+            $this->Flash->success(__('Your_email_address_was_already_activated_or_the_activation_code_was_not_valid.'));
+        } else {
+            $customer->activate_email_code = null;
+            $customer->active = true;
+            $this->Customer->save($customer);
+
+            $newPassword = $this->Customer->setNewPassword($customer->id_customer);
+
+            $email = new AppMailer();
+            $email->viewBuilder()->setTemplate('email_address_activated');
+            $email->setTo($customer->email)
+            ->setSubject(__('Your_email_address_has_been_activated_successfully.'))
+            ->setViewVars([
+                'appAuth' => $this->AppAuth,
+                'data' => $customer,
+                'newPassword' => $newPassword,
+            ]);
+
+            if (Configure::read('app.termsOfUseEnabled')) {
+                $email->addAttachments([__d('admin', 'Filename_Terms-of-use').'.pdf' => ['data' => $this->generateTermsOfUsePdf($customer), 'mimetype' => 'application/pdf']]);
+            }
+            $email->send();
+
+            $this->Flash->success(__('Your_email_address_has_been_activated_successfully._Your_password_has_been_sent_to_you.'));
+        }
+
+        $this->redirect('/');
+
     }
 
     public function newPasswordRequest()
@@ -172,7 +230,7 @@ class CustomersController extends FrontendController
 
     public function activateNewPassword()
     {
-        $activateNewPasswordCode = $this->getRequest()->getParam('pass')[0];
+        $activateNewPasswordCode = h($this->getRequest()->getParam('pass')[0]);
 
         if (!isset($activateNewPasswordCode)) {
             throw new RecordNotFoundException('activate new password code not passed');
@@ -198,7 +256,6 @@ class CustomersController extends FrontendController
                 ]
             );
             $this->Customer->save($patchedEntity);
-            $this->AppAuth->setUser($patchedEntity);
             $this->Flash->success(__('Your_new_password_was_successfully_activated.'));
         }
 
@@ -270,8 +327,8 @@ class CustomersController extends FrontendController
         $customer = $this->Customer->newEntity(
             [
                 'Customers' => [
-                    'active' => Configure::read('appDb.FCS_DEFAULT_NEW_MEMBER_ACTIVE'),
-                    'id_default_group' => Configure::read('appDb.FCS_CUSTOMER_GROUP'),
+                    'active' => 0,
+                    'id_default_group' => CUSTOMER_GROUP_MEMBER,
                     'terms_of_use_accepted_date' => Date::now(),
                     'passwd' => $ph->hash($newPassword)
                 ]
@@ -301,6 +358,13 @@ class CustomersController extends FrontendController
                 $this->setRequest($this->getRequest()->withData('Customers.email', $this->getRequest()->getData('Customers.address_customer.email')));
                 $this->setRequest($this->getRequest()->withData('Customers.address_customer.firstname', $this->getRequest()->getData('Customers.firstname')));
                 $this->setRequest($this->getRequest()->withData('Customers.address_customer.lastname', $this->getRequest()->getData('Customers.lastname')));
+
+                $this->setRequest($this->getRequest()->withoutData('Customers.active'));
+                $this->setRequest($this->getRequest()->withoutData('Customers.id_default_group'));
+
+                if (Configure::read('appDb.FCS_DEFAULT_NEW_MEMBER_ACTIVE')) {
+                    $this->setRequest($this->getRequest()->withData('Customers.activate_email_code', StringComponent::createRandomString(12)));
+                }
 
                 $customer = $this->Customer->patchEntity(
                     $customer,
@@ -335,9 +399,6 @@ class CustomersController extends FrontendController
                     $email = new AppMailer();
                     if (Configure::read('appDb.FCS_DEFAULT_NEW_MEMBER_ACTIVE')) {
                         $template = 'customer_registered_active';
-                        if (Configure::read('app.termsOfUseEnabled')) {
-                            $email->addAttachments([__('Filename_Terms-of-use').'.pdf' => ['data' => $this->generateTermsOfUsePdf(), 'mimetype' => 'application/pdf']]);
-                        }
                     } else {
                         $template = 'customer_registered_inactive';
                     }

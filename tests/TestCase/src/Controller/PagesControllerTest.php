@@ -39,7 +39,6 @@ class PagesControllerTest extends AppCakeTestCase
             $this->Slug->getHome(),
             $this->Slug->getManufacturerList(),
             $this->Slug->getManufacturerDetail(4, 'Demo Gemüse-Hersteller'),
-            $this->Slug->getManufacturerBlogList(4, 'Demo Gemüse-Hersteller'),
             $this->Slug->getBlogList(),
             $this->Slug->getBlogPostDetail(2, 'Demo Blog Artikel'),
             $this->Slug->getNewPasswordRequest(),
@@ -47,7 +46,8 @@ class PagesControllerTest extends AppCakeTestCase
             $this->Slug->getLogin(),
             $this->Slug->getListOfAllergens(),
             $this->Slug->getTermsOfUse(),
-            $this->Slug->getPrivacyPolicy()
+            $this->Slug->getPrivacyPolicy(),
+            $this->Slug->getProductSearch('artischocke'),
         ];
         $this->assertPagesForErrors($testUrls);
     }

@@ -119,18 +119,12 @@ class InvoicesTable extends AppTable
             'contain' => [
                 'AddressCustomers',
                 'ActiveOrderDetails' => function (Query $q) use ($currentDay) {
-                    $q->where(function (QueryExpression $exp, Query $q) use ($currentDay) {
-                        return $exp->addCase(
-                            [
-                                $q->newExpr()->lte('DATE_FORMAT(ActiveOrderDetails.pickup_day, \'%Y-%m-%d\')', $currentDay),
-                            ],
-                        );
+                    $q->where(function (QueryExpression $exp) use ($currentDay) {
+                        return $exp->lte('DATE_FORMAT(ActiveOrderDetails.pickup_day, \'%Y-%m-%d\')', $currentDay);
                     });
                     return $q;
                 },
-                'ActiveOrderDetails.OrderDetailTaxes',
                 'ActiveOrderDetails.OrderDetailUnits',
-                'ActiveOrderDetails.Taxes',
                 'ActiveOrderDetails.Products.Manufacturers',
             ]
         ])->first();
@@ -232,7 +226,7 @@ class InvoicesTable extends AppTable
         foreach ($orderDetails as $orderDetail) {
             $sumPriceIncl += $orderDetail->total_price_tax_incl;
             $sumPriceExcl += $orderDetail->total_price_tax_excl;
-            $sumTax += $orderDetail->order_detail_tax->total_amount;
+            $sumTax += $orderDetail->tax_total_amount;
         }
 
         $sumPriceIncl += $orderedDeposit['deposit_incl'];

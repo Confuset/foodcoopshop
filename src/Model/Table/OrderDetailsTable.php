@@ -3,7 +3,6 @@
 namespace App\Model\Table;
 
 use Cake\Core\Configure;
-use Cake\Database\Query;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
 use Cake\Validation\Validator;
@@ -32,12 +31,6 @@ class OrderDetailsTable extends AppTable
 
         $this->belongsTo('Customers', [
             'foreignKey' => 'id_customer'
-        ]);
-        $this->belongsTo('Taxes', [
-            'foreignKey' => 'id_tax'
-        ]);
-        $this->hasOne('OrderDetailTaxes', [
-            'foreignKey' => 'id_order_detail'
         ]);
         $this->hasOne('OrderDetailFeedbacks', [
             'foreignKey' => 'id_order_detail'
@@ -90,10 +83,10 @@ class OrderDetailsTable extends AppTable
     {
         $query = $this->find('all', [
             'conditions' => [
-                'OrderDetails.pickup_day = \'' . $pickupDay . '\'',
+                'OrderDetails.pickup_day' => $pickupDay,
             ],
             'contain' => [
-                'Products'
+                'Products',
             ]
         ]);
         return $query;
@@ -114,12 +107,8 @@ class OrderDetailsTable extends AppTable
                 'conditions' => $conditions,
             ]);
             if ($year != '') {
-                $query->where(function (QueryExpression $exp, Query $q) use ($year) {
-                    return $exp->addCase(
-                        [
-                            $q->newExpr()->eq('DATE_FORMAT(OrderDetails.pickup_day, \'%Y\')', $year),
-                        ],
-                    );
+                $query->where(function (QueryExpression $exp) use ($year) {
+                    return $exp->eq('DATE_FORMAT(OrderDetails.pickup_day, \'%Y\')', $year);
                 });
             }
             $query->select([
@@ -155,13 +144,19 @@ class OrderDetailsTable extends AppTable
             $cronjobRunDayWeekday = date('w', strtotime($cronjobRunDay));
             $query->where(function ($exp, $query) use ($cronjobRunDayWeekday, $cronjobRunDay, $pickupDay) {
                 return $exp->or([
-                    '(Products.delivery_rhythm_type <> "individual" AND Products.delivery_rhythm_send_order_list_weekday = ' . $cronjobRunDayWeekday . ')
-                      AND OrderDetails.pickup_day = "' . $pickupDay . '"',
-                    '(Products.delivery_rhythm_type = "individual" AND Products.delivery_rhythm_send_order_list_day = "' . $cronjobRunDay . '" AND OrderDetails.pickup_day = Products.delivery_rhythm_first_delivery_day)'
+                    $query->newExpr()->and([
+                        'Products.delivery_rhythm_type <> "individual"',
+                        $query->newExpr()->eq('Products.delivery_rhythm_send_order_list_weekday', $cronjobRunDayWeekday),
+                        $query->newExpr()->eq('OrderDetails.pickup_day', $pickupDay),
+                    ]),
+                    $query->newExpr()->and([
+                        'Products.delivery_rhythm_type = "individual"',
+                        $query->newExpr()->eq('Products.delivery_rhythm_send_order_list_day', $cronjobRunDay),
+                        'OrderDetails.pickup_day = Products.delivery_rhythm_first_delivery_day',
+                    ]),
                 ]);
             });
         }
-
         return $query;
     }
 
@@ -174,17 +169,12 @@ class OrderDetailsTable extends AppTable
             'sum_price_incl' => 0,
         ];
         foreach($orderDetails as $orderDetail) {
-            if (empty($orderDetail->tax)) {
-                $taxRate = 0;
-            } else {
-                $taxRate = $orderDetail->tax->rate;
-            }
-            $taxRate = Configure::read('app.numberHelper')->formatTaxRate($taxRate);
+            $taxRate = Configure::read('app.numberHelper')->formatTaxRate($orderDetail->tax_rate);
             if (!isset($taxRates[$taxRate])) {
                 $taxRates[$taxRate] = $defaultArray;
             }
             $taxRates[$taxRate]['sum_price_excl'] += $orderDetail->total_price_tax_excl;
-            $taxRates[$taxRate]['sum_tax'] += $orderDetail->order_detail_tax->total_amount;
+            $taxRates[$taxRate]['sum_tax'] += $orderDetail->tax_total_amount;
             $taxRates[$taxRate]['sum_price_incl'] += $orderDetail->total_price_tax_incl;
         }
 
@@ -272,31 +262,30 @@ class OrderDetailsTable extends AppTable
         $orderDetails = $this->find('all', [
             'conditions' => [
                 'Products.id_manufacturer' => $manufacturerId,
-                'OrderDetails.order_state IN (' . join(', ', $oldOrderStates) . ')'
             ],
             'contain' => [
-                'Products'
+                'Products',
             ]
-        ]);
+        ])
+        ->where(function (QueryExpression $exp) use ($oldOrderStates) {
+            return $exp->in('OrderDetails.order_state', $oldOrderStates);
+        });;
 
         if (!empty($orderDetailIds)) {
-            $orderDetails->where(['OrderDetails.id_order_detail IN (' . join(', ', $orderDetailIds) . ')']);
+            $orderDetails->where(function (QueryExpression $exp) use ($orderDetailIds) {
+                return $exp->in('OrderDetails.id_order_detail', $orderDetailIds);
+            });
         } else {
-            $orderDetails->where([
-                'DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\') >= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($dateFrom) . '\'',
-                'DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\') <= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($dateTo) . '\''
-            ]);
+            $orderDetails->where(function (QueryExpression $exp) use ($dateFrom, $dateTo) {
+                $exp->gte('DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate($dateFrom));
+                $exp->lte('DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate($dateTo));
+                return $exp;
+            });
         }
 
         foreach($orderDetails as $orderDetail) {
-            $this->save(
-                $this->patchEntity(
-                    $orderDetail,
-                    [
-                        'order_state' => $newOrderState
-                    ]
-                )
-            );
+            $orderDetail->order_state = $newOrderState;
+            $this->save($orderDetail);
         }
 
     }
@@ -307,30 +296,25 @@ class OrderDetailsTable extends AppTable
         $cartsAssociation->setJoinType('INNER');
         $cartsAssociation->setConditions([
             'Carts.cart_type' => CartsTable::CART_TYPE_WEEKLY_RHYTHM,
-            'Carts.status' => APP_OFF
+            'Carts.status' => APP_OFF,
         ]);
-        $conditions = [
-            'OrderDetails.id_customer' => $customerId,
-        ];
-
-        $conditions[] = 'DATE_FORMAT(OrderDetails.created, \'%Y-%m-%d\') >= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate(
-            date('Y-m-d', $dateFrom)
-        ).'\'';
-
-        $conditions[] = 'DATE_FORMAT(OrderDetails.created, \'%Y-%m-%d\') <= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate(
-            date('Y-m-d', $dateTo)
-        ).'\'';
 
         $orderDetails = $this->find('all', [
-            'conditions' => $conditions,
+            'conditions' => [
+                'OrderDetails.id_customer' => $customerId,
+            ],
             'order' => [
-                'OrderDetails.created' => 'DESC'
+                'OrderDetails.created' => 'DESC',
             ],
             'contain' => [
                 'CartProducts.Carts',
-                'Products.Manufacturers'
+                'Products.Manufacturers',
             ]
-        ])->toArray();
+        ])->where(function (QueryExpression $exp) use ($dateFrom, $dateTo) {
+            $exp->gte('DATE_FORMAT(OrderDetails.created, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate(date('Y-m-d', $dateFrom)));
+            $exp->lte('DATE_FORMAT(OrderDetails.created, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate(date('Y-m-d', $dateTo)));
+            return $exp;
+        })->toArray();
 
         return $orderDetails;
     }
@@ -338,10 +322,6 @@ class OrderDetailsTable extends AppTable
     public function deleteOrderDetail($orderDetail)
     {
         $this->delete($orderDetail);
-
-        if (!empty($orderDetail->order_detail_tax)) {
-            $this->OrderDetailTaxes->delete($orderDetail->order_detail_tax);
-        }
 
         if (!empty($orderDetail->timebased_currency_order_detail)) {
             $this->TimebasedCurrencyOrderDetails->delete($orderDetail->timebased_currency_order_detail);
@@ -443,24 +423,23 @@ class OrderDetailsTable extends AppTable
 
     private function prepareSumProduct($customerId)
     {
-        $conditions = [
-            'OrderDetails.id_customer' => $customerId,
-            'OrderDetails.order_state IN (' . join(',', Configure::read('app.htmlHelper')->getOrderStatesCashless()) . ')'
-        ];
         $query = $this->find('all', [
-            'conditions' => $conditions
-        ]);
-
+            'conditions' => [
+                'OrderDetails.id_customer' => $customerId,
+            ],
+        ])
+        ->where(function (QueryExpression $exp) {
+            return $exp->in('OrderDetails.order_state', Configure::read('app.htmlHelper')->getOrderStatesCashless());
+        });
         return $query;
     }
 
     public function getCountByCustomerId($customerId)
     {
-        $conditions = [
-            'OrderDetails.id_customer' => $customerId
-        ];
         $query = $this->find('all', [
-            'conditions' => $conditions
+            'conditions' => [
+                'OrderDetails.id_customer' => $customerId,
+            ],
         ]);
         return $query->count();
     }
@@ -488,20 +467,24 @@ class OrderDetailsTable extends AppTable
             // do not show any non-associated products that might be found in database
             $conditions[] = 'Products.id_manufacturer > 0';
         }
-        if ($year != '') {
-            $conditions[] = 'DATE_FORMAT(OrderDetails.pickup_day, \'%Y\') = ' . $year;
-        }
 
         $query = $this->find('all', [
             'conditions' => $conditions,
             'contain' => [
-                'Products'
+                'Products',
             ]
         ]);
+
+        if ($year != '') {
+            $query->where(function (QueryExpression $exp) use ($year) {
+                return $exp->eq('DATE_FORMAT(OrderDetails.pickup_day, \'%Y\')', $year);
+            });
+        }
+
         $query->group('MonthAndYear');
         $query->select([
             'SumTotalPaid' => $query->func()->sum('OrderDetails.total_price_tax_incl'),
-            'MonthAndYear' => 'DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%c\')'
+            'MonthAndYear' => 'DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%c\')',
         ]);
         return $query;
     }
@@ -517,32 +500,33 @@ class OrderDetailsTable extends AppTable
 
     public function getSumDeposit($customerId)
     {
-        $conditions = [
-            'OrderDetails.id_customer' => $customerId,
-            $this->getOrderStateCondition(Configure::read('app.htmlHelper')->getOrderStatesCashless()),
-            'DATE_FORMAT(OrderDetails.created, \'%Y-%m-%d\') >= \'' . Configure::read('app.depositPaymentCashlessStartDate') . '\''
-        ];
-
         $query = $this->find('all', [
-            'conditions' => $conditions
+            'conditions' => [
+                'OrderDetails.id_customer' => $customerId,
+            ],
         ]);
+        $query = $this->setOrderStateCondition($query, Configure::read('app.htmlHelper')->getOrderStatesCashless());
+        $query->where(function (QueryExpression $exp) {
+            return $exp->gte('DATE_FORMAT(OrderDetails.created, \'%Y-%m-%d\')', Configure::read('app.depositPaymentCashlessStartDate'));
+        });
         $query->select(
             ['SumTotalDeposit' => $query->func()->sum('OrderDetails.deposit')]
         );
-
         return $query->toArray()[0]['SumTotalDeposit'];
     }
 
-    public function getOrderStateCondition($orderStates)
+    public function setOrderStateCondition($query, $orderStates)
     {
         if ($orderStates == '' || empty($orderStates) || empty($orderStates[0])) {
-            return false;
+            return $query;
         }
         if (!is_array($orderStates)) {
             $orderStates = [$orderStates];
         }
-        $condition = 'OrderDetails.order_state IN (' . join(', ', $orderStates) . ')';
-        return $condition;
+        $query->where(function (QueryExpression $exp) use ($orderStates) {
+            return $exp->in('OrderDetails.order_state', $orderStates);
+        });
+        return $query;
     }
 
     public function getVariableMemberFeeReducedPrice($price, $variableMemberFee)
@@ -642,11 +626,12 @@ class OrderDetailsTable extends AppTable
     {
         $conditions = [];
 
+        $exp = new QueryExpression();
         if (count($pickupDay) == 2) {
-            $conditions[] = 'DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\') >= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($pickupDay[0]) . '\'';
-            $conditions[] = 'DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\') <= \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($pickupDay[1]) . '\'';
+            $conditions[] = $exp->gte('DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate($pickupDay[0]));
+            $conditions[] = $exp->lte('DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate($pickupDay[1]));
         } else {
-            $conditions[] = 'DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\') = \'' . Configure::read('app.timeHelper')->formatToDbFormatDate($pickupDay[0]) . '\'';
+            $conditions[] = $exp->eq('DATE_FORMAT(OrderDetails.pickup_day, \'%Y-%m-%d\')', Configure::read('app.timeHelper')->formatToDbFormatDate($pickupDay[0]));
         }
 
         if ($productId != '') {

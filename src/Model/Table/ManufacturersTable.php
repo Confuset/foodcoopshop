@@ -458,14 +458,13 @@ class ManufacturersTable extends AppTable
     {
         switch ($order) {
             case 'product':
-                $orderClause = 'od.product_name ASC, t.rate ASC, ' . Configure::read('app.htmlHelper')->getCustomerNameForSql() . ' ASC';
+                $orderClause = 'od.product_name ASC, od.tax_rate ASC, ' . Configure::read('app.htmlHelper')->getCustomerNameForSql() . ' ASC';
                 break;
             case 'customer':
                 $orderClause = Configure::read('app.htmlHelper')->getCustomerNameForSql() . ' ASC, od.product_name ASC';
                 break;
         }
 
-        // do not use params for $orderState, it will result in IN ('3,2,1') which is wrong
         $params = [
             'manufacturerId' => $manufacturerId
         ];
@@ -474,6 +473,7 @@ class ManufacturersTable extends AppTable
 
         if (is_null($dateTo)) {
             // order list
+            // do not use params for $orderState, it will result in IN ('3,2,1') which is wrong
             $orderDetailCondition = "AND od.id_order_detail IN (" . join(',', $orderDetailIds) . ")" ;
             $dateConditions = "";
         } else {
@@ -490,6 +490,7 @@ class ManufacturersTable extends AppTable
 
         $orderStateCondition = "";
         if (!empty($orderState)) {
+            // do not use params for $orderState, it will result in IN ('3,2,1') which is wrong
             $orderStateCondition = "AND od.order_state IN (" . join(',', $orderState) . ")";
         }
 
@@ -501,8 +502,8 @@ class ManufacturersTable extends AppTable
         m.uid_number as ManufacturerUidNumber,
         m.additional_text_for_invoice as ManufacturerAdditionalTextForInvoice,
         ma.firstname as ManufacturerFirstname, ma.lastname as ManufacturerLastname, ma.address1 as ManufacturerAddress1, ma.postcode as ManufacturerPostcode, ma.city as ManufacturerCity,
-        t.rate as TaxRate,
-        odt.total_amount AS OrderDetailTaxAmount,
+        od.tax_rate as TaxRate,
+        od.tax_total_amount as OrderDetailTaxAmount,
         od.id_order_detail AS OrderDetailId,
         od.product_id AS ProductId,
         od.product_name AS ProductName,
@@ -518,12 +519,10 @@ class ManufacturersTable extends AppTable
         {$customerNameAsSql} AS CustomerName
         FROM ".$this->tablePrefix."order_detail od
             LEFT JOIN ".$this->tablePrefix."product p ON p.id_product = od.product_id
-            LEFT JOIN ".$this->tablePrefix."order_detail_tax odt ON odt.id_order_detail = od.id_order_detail
             LEFT JOIN ".$this->tablePrefix."order_detail_units odu ON od.id_order_detail = odu.id_order_detail
             LEFT JOIN ".$this->tablePrefix."customer c ON c.id_customer = od.id_customer
             LEFT JOIN ".$this->tablePrefix."manufacturer m ON m.id_manufacturer = p.id_manufacturer
             LEFT JOIN ".$this->tablePrefix."address ma ON m.id_manufacturer = ma.id_manufacturer
-            LEFT JOIN ".$this->tablePrefix."tax t ON od.id_tax = t.id_tax
             WHERE 1
             {$dateConditions}
             AND m.id_manufacturer = :manufacturerId

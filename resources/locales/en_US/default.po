@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-02-20 22:41+0100\n"
-"PO-Revision-Date: 2021-02-24 10:54+0100\n"
+"POT-Creation-Date: 2021-04-27 17:06+0200\n"
+"PO-Revision-Date: 2021-04-27 17:06+0200\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
@@ -258,6 +258,15 @@ msgstr "Accepting terms of use"
 msgid "Accepting_the_terms_of_use_have_been_saved."
 msgstr "Accepting the terms of use have been saved."
 
+msgid "Your_email_address_was_already_activated_or_the_activation_code_was_not_valid."
+msgstr "Your email address was already activated or the activation code was not valid."
+
+msgid "Your_email_address_has_been_activated_successfully."
+msgstr "Your email address has been activated successfully."
+
+msgid "Your_email_address_has_been_activated_successfully._Your_password_has_been_sent_to_you."
+msgstr "Your email address has been activated successfully, your password has been sent to you."
+
 msgid "Request_new_password"
 msgstr "Request new password"
 
@@ -274,7 +283,7 @@ msgid "Your_new_password_was_already_activated_or_the_activation_code_was_not_va
 msgstr "Your new password was already activated or the activation code was not valid."
 
 msgid "Your_new_password_was_successfully_activated."
-msgstr "Your new password was successfully activated and you are already signed in."
+msgstr "Your new password was successfully activated."
 
 msgid "Sign_in"
 msgstr "Sign in"
@@ -290,9 +299,6 @@ msgstr "Signing in failed. Accout inactive or password wrong?"
 
 msgid "Member_{0}_created_an_account."
 msgstr "Member {0} created an account."
-
-msgid "Filename_Terms-of-use"
-msgstr "Terms-of-use"
 
 msgid "Welcome"
 msgstr "Welcome"
@@ -530,12 +536,6 @@ msgstr "Close all orders?"
 
 msgid "Really_close_all_orders?"
 msgstr "Really close all visible orders?"
-
-msgid "Generate_orders_as_pdf?"
-msgstr "Generate orders as PDF?"
-
-msgid "Really_generate_orders_as_pdf?"
-msgstr "Really generate orders as PDF?"
 
 msgid "Email_addresses"
 msgstr "E-mail addresses"
@@ -836,6 +836,9 @@ msgstr "To which member should the ordered product {0} of {1} be assigned to?"
 
 msgid "Please_select_new_member."
 msgstr "Please select the new member."
+
+msgid "Please_select_a_member."
+msgstr "Please select a member."
 
 msgid "Amount_that_should_be_changed_to_member?"
 msgstr "Amount that should be assigned to the member?"
@@ -1343,12 +1346,6 @@ msgstr "Member: Deposit deleted"
 
 msgid "Action_Log_Manufacturer_deposit_deleted"
 msgstr "Manufacturer: Deposit deleted"
-
-msgid "Action_Log_Member_member_fee_added"
-msgstr "Member: Member fee added"
-
-msgid "Action_Log_Member_member_fee_deleted"
-msgstr "Member: Member fee deleted"
 
 msgid "Action_Log_Blog_post_added"
 msgstr "Blog post: Added"
@@ -1875,9 +1872,6 @@ msgstr "Activities"
 msgid "Credit"
 msgstr "Credit"
 
-msgid "Member_fee"
-msgstr "Member fee"
-
 msgid "weekly"
 msgstr "weekly"
 
@@ -1910,6 +1904,9 @@ msgstr "{0} takes a delivery break on {1}."
 
 msgid "Mobile"
 msgstr "Mobile"
+
+msgid "Phone"
+msgstr "Phone"
 
 msgid "Email"
 msgstr "E-mail"
@@ -1959,9 +1956,6 @@ msgstr "Credit upload"
 msgid "Payment_type_payback"
 msgstr "Payback"
 
-msgid "Payment_type_member_fee"
-msgstr "Member fee"
-
 msgid "Empty_glasses"
 msgstr "Empty glasses"
 
@@ -2001,9 +1995,6 @@ msgstr "default value"
 msgid "price_will_be_adapted."
 msgstr "price will be adapted."
 
-msgid "route_news"
-msgstr "news"
-
 msgid "route_all_products"
 msgstr "All-products"
 
@@ -2022,9 +2013,6 @@ msgstr "Account of {0}"
 msgid "Modified_on"
 msgstr "Modified on"
 
-msgid "Go_to_blog_from"
-msgstr "Show blog from"
-
 msgid "by"
 msgstr "by"
 
@@ -2039,12 +2027,6 @@ msgstr "of {0}"
 
 msgid "found"
 msgstr "found"
-
-msgid "Show_Blog_post"
-msgstr "Show blog post"
-
-msgid "Go_to_manufacturer"
-msgstr "Show manufacturer"
 
 msgid "Your_cart_is_empty"
 msgstr "Your cart is empty"
@@ -2118,9 +2100,6 @@ msgstr "Zip"
 msgid "City"
 msgstr "City"
 
-msgid "Phone"
-msgstr "Phone"
-
 msgid "Want_to_receive_reminder_emails?"
 msgstr "Do you want to receive an order reminder e-mail every week?"
 
@@ -2144,9 +2123,6 @@ msgstr "Your account was created but not activated yet. This means, you can't lo
 
 msgid "You_will_get_an_email_as_soon_as_we_activated_you."
 msgstr "You will get an e-mail as soon as we activate you."
-
-msgid "News_from"
-msgstr "News from"
 
 msgid "Imprint"
 msgstr "Imprint"
@@ -2280,9 +2256,6 @@ msgstr "Contact"
 msgid "Bank_account_credit_balance"
 msgstr "Bank account (credit)"
 
-msgid "Bank_account_member_fee"
-msgstr "Bank account (member fee)"
-
 msgid "Attention_delivery_break!"
 msgstr "Attention, delivery break!"
 
@@ -2387,6 +2360,9 @@ msgstr "Your account at {0} has just been activated."
 
 msgid "Your_registration_at_{0}_has_just_been_successful!"
 msgstr "Your registration at {0} has been successful!"
+
+msgid "Please_confirm_your_email_address"
+msgstr "Please confirm your email address"
 
 msgid "Dear_responsible_person_for_new_members,"
 msgstr "Dear responsible for new members,"
@@ -2516,6 +2492,52 @@ msgstr "placed on"
 
 msgid "Prices_are_including_vat."
 msgstr "The prices include the VAT."
+
+#~ msgid "Action_Log_Member_member_fee_added"
+#~ msgstr "Member: Member fee added"
+
+#~ msgid "Action_Log_Member_member_fee_deleted"
+#~ msgstr "Member: Member fee deleted"
+
+#~ msgid "Member_fee"
+#~ msgstr "Member fee"
+
+#~ msgid "Payment_type_member_fee"
+#~ msgstr "Member fee"
+
+#~ msgid "Bank_account_member_fee"
+#~ msgstr "Bank account (member fee)"
+
+#~ msgid "Your_email_address_has_been_activated_successfully and you are already logged in."
+#~ msgstr "Your email address has been activated successfully and you are already signed in."
+
+#, fuzzy
+#~ msgid "Your_email_address_was_activated"
+#~ msgstr "Your email address was successfully activated and you are already signed in."
+
+#~ msgid "Filename_Terms-of-use"
+#~ msgstr "Terms-of-use"
+
+#~ msgid "Generate_orders_as_pdf?"
+#~ msgstr "Generate orders as PDF?"
+
+#~ msgid "Really_generate_orders_as_pdf?"
+#~ msgstr "Really generate orders as PDF?"
+
+#~ msgid "route_news"
+#~ msgstr "news"
+
+#~ msgid "Go_to_blog_from"
+#~ msgstr "Show blog from"
+
+#~ msgid "Show_Blog_post"
+#~ msgstr "Show blog post"
+
+#~ msgid "Go_to_manufacturer"
+#~ msgstr "Show manufacturer"
+
+#~ msgid "News_from"
+#~ msgstr "News from"
 
 #~ msgid "Other_initiaives_working_with_FoodCoopShop"
 #~ msgstr "Other initiatives working with FoodCoopShop"

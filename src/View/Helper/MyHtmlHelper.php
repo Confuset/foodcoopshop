@@ -356,9 +356,9 @@ class MyHtmlHelper extends HtmlHelper
         }
         if ($manufacturer->address_manufacturer->phone != '') {
             if ($outputType == 'html') {
-                $imprintLines[] = __('Mobile') . ': <a href="tel:' . $manufacturer->address_manufacturer->phone . '">' . $manufacturer->address_manufacturer->phone . '</a>';
+                $imprintLines[] = __('Phone') . ': <a href="tel:' . $manufacturer->address_manufacturer->phone . '">' . $manufacturer->address_manufacturer->phone . '</a>';
             } else {
-                $imprintLines[] = __('Mobile') . ': ' . $manufacturer->address_manufacturer->phone;
+                $imprintLines[] = __('Phone') . ': ' . $manufacturer->address_manufacturer->phone;
             }
         }
         $imprintLines[] = __('Email') . ': ' . ($outputType == 'html' ? StringComponent::hideEmail($manufacturer->address_manufacturer->email) : $manufacturer->address_manufacturer->email);
@@ -491,17 +491,6 @@ class MyHtmlHelper extends HtmlHelper
         }
     }
 
-    public function getMemberFeeTextForFrontend($text)
-    {
-        $explodedText = explode(',', $text);
-        $preparedText = [];
-        foreach ($explodedText as $t) {
-            $explodedDate = explode('-', $t);
-            $preparedText[] = Configure::read('app.timeHelper')->getMonthName($explodedDate[1]) . ' ' . $explodedDate[0];
-        }
-        return implode(', ', $preparedText);
-    }
-
     public function getReportTabs()
     {
         $tabs = [];
@@ -544,9 +533,6 @@ class MyHtmlHelper extends HtmlHelper
             'payback' => __('Payment_type_payback'),
             'deposit' => __('Payment_type_deposit_return'),
         ];
-        if (Configure::read('app.memberFeeEnabled')) {
-            $paymentTexts['member_fee'] = __('Payment_type_member_fee');
-        }
         return $paymentTexts;
     }
 

@@ -23,7 +23,7 @@ use Cake\Core\Configure;
             Configure::read('app.jsNamespace') . ".Admin.init();" .
             Configure::read('app.jsNamespace') . ".ModalCustomerStatusEdit.init();" .
             Configure::read('app.jsNamespace') . ".ModalCustomerGroupEdit.init();" .
-            Configure::read('app.jsNamespace') . ".Helper.initTooltip('.customer-details-read-button, .customer-comment-edit-button');" .
+            Configure::read('app.jsNamespace') . ".Helper.initTooltip('.customer-details-read-button, .customer-comment-edit-button, .customer-email-button');" .
             Configure::read('app.jsNamespace') . ".ModalCustomerCommentEdit.init();"
     ]);
     ?>
@@ -31,7 +31,6 @@ use Cake\Core\Configure;
     <div class="filter-container">
         <?php echo $this->Form->create(null, ['type' => 'get']); ?>
             <?php echo $this->Form->control('active', ['type' => 'select', 'label' => '', 'options' => $this->MyHtml->getActiveStates(), 'default' => isset($active) ? $active : '']); ?>
-            <?php echo __d('admin', 'Last_pickup_day'); ?> <?php echo $this->element('dateFields', ['dateFrom' => $dateFrom, 'dateTo' => $dateTo, 'nameFrom' => 'dateFrom', 'nameTo' => 'dateTo']); ?>
             <?php
                 if (Configure::read('appDb.FCS_MEMBER_FEE_PRODUCTS') != '') {
                     echo $this->Form->control('year', [
@@ -111,9 +110,9 @@ foreach ($customers as $customer) {
                 ]
             );
         }
-        if (!empty($customer->valid_order_details) && $customer->valid_order_details[0]->valid_order_detail_count <= 25) {
+        if ($customer->order_detail_count <= 25) {
             $customerName = '<i class="fas fa-carrot" title="'.__d('admin', 'Newbie_only_{0}_products_ordered.', [
-                $customer->valid_order_details[0]->valid_order_detail_count
+                $customer->order_detail_count
             ]).'"></i> ' . $customerName;
         }
 
@@ -162,8 +161,17 @@ foreach ($customers as $customer) {
     echo '<span class="group-for-dialog">' . $customer->id_default_group . '</span>';
     echo '</td>';
 
-    echo '<td>';
-    echo '<span class="email">' . $customer->email . '</span>';
+    echo '<td style="text-align:center;">';
+        $classes = ['far fa-envelope ok fa-lg customer-email-button'];
+        $title = h($customer->email);
+        if ($customer->activate_email_code != null) {
+            $classes[] = 'not-activated';
+            $title .= '<br /><br />' . __d('admin', 'This_email_address_is_not_yet_activated_you_can_activate_it_here_{0}.', [
+                $this->Slug->getActivateEmailAddress($customer->activate_email_code),
+            ]);
+        }
+
+        echo '<i class="'.join(' ', $classes).'" data-email="'.h($customer->email).'" title="'.h($title).'"></i>';
     echo '</td>';
 
     echo '<td style="text-align:center;width:42px;">';
@@ -181,7 +189,7 @@ foreach ($customers as $customer) {
         );
     }
 
-    if ($customer->active == '') {
+    if ($customer->active == '' && is_null($customer->activate_email_code)) {
         echo $this->Html->link(
             '<i class="fas fa-minus-circle not-ok"></i>',
             'javascript:void(0);',
@@ -197,12 +205,8 @@ foreach ($customers as $customer) {
     echo '</td>';
 
     echo '<td style="text-align:right">';
-        if (!empty($customer->valid_order_details)) {
-            echo $this->Number->formatAsDecimal($customer->valid_order_details[0]->valid_order_detail_count, 0);
-            $sumOrderDetailsCount += $customer->valid_order_details[0]->valid_order_detail_count;
-        } else {
-            echo $this->Number->formatAsDecimal(0, 0);
-        }
+        echo $this->Number->formatAsDecimal($customer->order_detail_count, 0);
+        $sumOrderDetailsCount += $customer->order_detail_count;
     echo '</td>';
 
     if ($this->Html->paymentIsCashless()) {

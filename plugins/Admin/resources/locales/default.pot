@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2021-02-23 15:33+0100\n"
+"POT-Creation-Date: 2021-04-27 17:06+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -413,9 +413,6 @@ msgstr ""
 msgid "The_amount_was_added_to_the_deposit_account_of_{0}_and_can_be_deleted_there."
 msgstr ""
 
-msgid "The_amount_was_added_to_the_member_fee_system_of_{0}_and_can_be_deleted_there."
-msgstr ""
-
 msgid "The_payment_({0}_{1})_was_removed_successfully."
 msgstr ""
 
@@ -584,7 +581,7 @@ msgstr ""
 msgid "No_records_were_imported."
 msgstr ""
 
-msgid "{0,plural,=1{1_record_was} other{#_records_were}_successfully_imported."
+msgid "{0,plural,=1{1_record_was} other{#_records_were}_successfully_imported._Sum:_{1}"
 msgstr ""
 
 msgid "Upload_successful._Please_select_the_records_you_want_to_import_and_then_click_save_button."
@@ -791,7 +788,10 @@ msgstr ""
 msgid "Blog_post_manufacturer_description"
 msgstr ""
 
-msgid "Show_on_homepage"
+msgid "Show_on_startpage_until"
+msgstr ""
+
+msgid "Leave_empty_to_never_show_blog_post_on_start_page."
 msgstr ""
 
 msgid "Only_for_members"
@@ -819,9 +819,6 @@ msgid "all_members"
 msgstr ""
 
 msgid "all_manufacturers"
-msgstr ""
-
-msgid "Homepage"
 msgstr ""
 
 msgid "Modified_by"
@@ -1007,9 +1004,6 @@ msgstr ""
 msgid "Delete_member_irrevocably?"
 msgstr ""
 
-msgid "Last_pickup_day"
-msgstr ""
-
 msgid "Show_all_years"
 msgstr ""
 
@@ -1028,6 +1022,9 @@ msgstr ""
 msgid "Register_date"
 msgstr ""
 
+msgid "Last_pickup_day"
+msgstr ""
+
 msgid "Comment_abbreviation"
 msgstr ""
 
@@ -1038,6 +1035,9 @@ msgid "Show_all_orders_from_{0}"
 msgstr ""
 
 msgid "Change_group"
+msgstr ""
+
+msgid "This_email_address_is_not_yet_activated_you_can_activate_it_here_{0}."
 msgstr ""
 
 msgid "deactivate"
@@ -1139,6 +1139,15 @@ msgstr ""
 msgid "All_amounts_in_{0}."
 msgstr ""
 
+msgid "Tax_overview_cash"
+msgstr ""
+
+msgid "Tax_overview_cashless"
+msgstr ""
+
+msgid "Tax_overview_total"
+msgstr ""
+
 msgid "Download_invoices"
 msgstr ""
 
@@ -1170,15 +1179,6 @@ msgid "Cancellation"
 msgstr ""
 
 msgid "Total_sum"
-msgstr ""
-
-msgid "Tax_overview_cash"
-msgstr ""
-
-msgid "Tax_overview_cashless"
-msgstr ""
-
-msgid "Tax_overview_total"
 msgstr ""
 
 msgid "Pickup_day"
@@ -1598,15 +1598,6 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
-msgid "Add_transfered_member_fee"
-msgstr ""
-
-msgid "Delete_payment?"
-msgstr ""
-
-msgid "Back_to_member_overview"
-msgstr ""
-
 msgid "docs_route_credit_system"
 msgstr ""
 
@@ -1620,6 +1611,9 @@ msgid "Delete_upload?"
 msgstr ""
 
 msgid "Your_credit_balance"
+msgstr ""
+
+msgid "Back_to_member_overview"
 msgstr ""
 
 msgid "chose_manufacturer..."
@@ -1724,6 +1718,9 @@ msgstr ""
 msgid "Add_deposit_amount_for_{0}"
 msgstr ""
 
+msgid "Add_deposit_amount_for"
+msgstr ""
+
 msgid "Please_add_value_of_empty_glasses__that_is_taken_back_by_manufacturer."
 msgstr ""
 
@@ -1778,9 +1775,6 @@ msgstr ""
 msgid "Order_adaptions"
 msgstr ""
 
-msgid "Deposit_returns"
-msgstr ""
-
 msgid "My_data"
 msgstr ""
 
@@ -1832,6 +1826,12 @@ msgstr ""
 msgid "Show_all_ordered_products_from_{0}"
 msgstr ""
 
+msgid "Order_state"
+msgstr ""
+
+msgid "Order_date"
+msgstr ""
+
 msgid "products_picked_up"
 msgstr ""
 
@@ -1866,9 +1866,6 @@ msgid "Please_enter_the_amount_that_you_just_transfered_to_our_bank_account."
 msgstr ""
 
 msgid "If_payback_please_add_amount_that_you_transfered_back_to_the_bank_account_of_the_member."
-msgstr ""
-
-msgid "Please_chose_the_months_for_your_payment."
 msgstr ""
 
 msgid "Upload_CSV_file_with_bank_transactions"
@@ -2049,9 +2046,6 @@ msgid "Why_has_another_member_been_assigned?"
 msgstr ""
 
 msgid "sorry,_{0}_can_not_be_delivered."
-msgstr ""
-
-msgid "Order_date"
 msgstr ""
 
 msgid "Why_has_the_product_been_cancelled?"

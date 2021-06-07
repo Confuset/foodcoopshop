@@ -17,6 +17,8 @@ use App\Controller\Component\StringComponent;
 use Cake\Core\Configure;
 
 $this->element('addScript', ['script' =>
+    Configure::read('app.jsNamespace') . ".Helper.initDatepicker();
+    $('input.datepicker').datepicker();".
     Configure::read('app.jsNamespace') . ".Admin.init();" .
     Configure::read('app.jsNamespace') . ".Helper.initCkeditorBig('blogposts-content');" .
     Configure::read('app.jsNamespace') . ".Upload.initImageUpload('body.blog_posts .add-image-button', foodcoopshop.Upload.saveBlogPostTmpImageInForm);" .
@@ -88,6 +90,7 @@ echo '<div class="blog-post-image-wrapper">';
     echo '<span class="small">' . $defaultImageExplanationText . '</span>';
 echo '</div>';
 echo $this->Form->hidden('BlogPosts.tmp_image');
+$this->Form->unlockField('BlogPosts.tmp_image');
 echo '</div>';
 echo $this->Form->control('BlogPosts.delete_image', [
     'label' => __d('admin', 'Delete_image?') . ' <span class="after small">'.__d('admin', 'Check_and_do_not_forget_to_click_save_button.').'</span>',
@@ -105,10 +108,14 @@ if (Configure::read('app.showManufacturerListAndDetailPage') && ($appAuth->isSup
     echo '<span class="description small">'.__d('admin', 'Blog_post_manufacturer_description') . '</span>';
 }
 
-echo $this->Form->control('BlogPosts.is_featured', [
-    'label' => __d('admin', 'Show_on_homepage') . '?',
-    'type' => 'checkbox'
+echo $this->Form->control('BlogPosts.show_on_start_page_until', [
+    'label' => __d('admin', 'Show_on_startpage_until') . '? <span class="after small">'.__d('admin', 'Leave_empty_to_never_show_blog_post_on_start_page.').'</span>',
+    'class' => 'datepicker',
+    'type' => 'text',
+    'escape' => false,
+    'value' => !is_null($blogPost->show_on_start_page_until) ? $blogPost->show_on_start_page_until->i18nFormat(Configure::read('app.timeHelper')->getI18Format('DateLong2')) : null,
 ]);
+
 echo $this->Form->control('BlogPosts.is_private', [
     'label' => __d('admin', 'Only_for_members').'?',
     'type' => 'checkbox'

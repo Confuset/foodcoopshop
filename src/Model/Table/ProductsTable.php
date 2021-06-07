@@ -871,7 +871,8 @@ class ProductsTable extends AppTable
                 $product->is_new = $this->isNew($product->created->i18nFormat(Configure::read('DateFormat.Database')));
             }
 
-            $product->gross_price = $this->getGrossPrice($product->id_product, $product->price);
+            $taxRate = is_null($product->tax) ? 0 : $product->tax->rate;
+            $product->gross_price = $this->getGrossPrice($product->id_product, $product->price, $taxRate);
 
             $product->delivery_rhythm_string = Configure::read('app.htmlHelper')->getDeliveryRhythmString(
                 $product->is_stock_product && $product->manufacturer->stock_management_enabled,
@@ -964,7 +965,7 @@ class ProductsTable extends AppTable
 
                     $grossPrice = 0;
                     if (! empty($attribute->price)) {
-                        $grossPrice = $this->getGrossPrice($product->id_product, $attribute->price);
+                        $grossPrice = $this->getGrossPrice($product->id_product, $attribute->price, $taxRate);
                     }
 
                     $rowClass = [
@@ -1160,7 +1161,7 @@ class ProductsTable extends AppTable
         $params = [
             'oldNetPrice' => $oldNetPrice,
             'oldTaxRate' => $oldTaxRate,
-            'productId' => $productId
+            'productId' => $productId,
         ];
         $statement = $this->getConnection()->prepare($sql);
         $statement->execute($params);
@@ -1176,14 +1177,22 @@ class ProductsTable extends AppTable
         return $newNetPrice;
     }
 
-    public function getGrossPrice($productId, $netPrice)
+    public function getGrossPrice($productId, $netPrice, $taxRate = null)
     {
+
+        if (!is_null($taxRate)) {
+            $grossPrice = $netPrice * (100 + $taxRate) / 100;
+            $grossPrice = round($grossPrice, 2);
+            return $grossPrice;
+        }
+
+        // fallback: if $taxRate is not passed, get it from database
         $productId = (int) $productId;
         $sql = 'SELECT ROUND(:netPrice * (100 + t.rate) / 100, 2) as gross_price ';
         $sql .= $this->getTaxJoins();
         $params = [
             'netPrice' => $netPrice,
-            'productId' => $productId
+            'productId' => $productId,
         ];
         $statement = $this->getConnection()->prepare($sql);
         $statement->execute($params);
@@ -1211,7 +1220,7 @@ class ProductsTable extends AppTable
         $sql .= $this->getTaxJoins();
         $params = [
             'productId' => $productId,
-            'grossPrice' => $grossPrice
+            'grossPrice' => $grossPrice,
         ];
         $statement = $this->getConnection()->prepare($sql);
         $statement->execute($params);
@@ -1241,7 +1250,7 @@ class ProductsTable extends AppTable
     {
         $productAttributes = $this->ProductAttributes->find('all', [
             'conditions' => [
-                'ProductAttributes.id_product' => $productId
+                'ProductAttributes.id_product' => $productId,
             ]
         ])->toArray();
 
@@ -1270,28 +1279,28 @@ class ProductsTable extends AppTable
 
         $pac = $this->ProductAttributes->ProductAttributeCombinations->find('all', [
             'conditions' => [
-                'ProductAttributeCombinations.id_product_attribute' => $attributeId
+                'ProductAttributeCombinations.id_product_attribute' => $attributeId,
             ]
         ])->first();
         $productAttributeId = $pac->id_product_attribute;
 
         $this->ProductAttributes->deleteAll([
-            'ProductAttributes.id_product_attribute' => $productAttributeId
+            'ProductAttributes.id_product_attribute' => $productAttributeId,
         ]);
 
         $this->ProductAttributes->ProductAttributeCombinations->deleteAll([
-            'ProductAttributeCombinations.id_product_attribute' => $productAttributeId
+            'ProductAttributeCombinations.id_product_attribute' => $productAttributeId,
         ]);
 
         $this->ProductAttributes->UnitProductAttributes->deleteAll([
-            'UnitProductAttributes.id_product_attribute' => $productAttributeId
+            'UnitProductAttributes.id_product_attribute' => $productAttributeId,
         ]);
 
         // deleteAll can only get primary key as condition
         $originalPrimaryKey = $this->StockAvailables->getPrimaryKey();
         $this->StockAvailables->setPrimaryKey('id_product_attribute');
         $this->StockAvailables->deleteAll([
-            'StockAvailables.id_product_attribute' => $attributeId
+            'StockAvailables.id_product_attribute' => $attributeId,
         ]);
         $this->StockAvailables->setPrimaryKey($originalPrimaryKey);
 
