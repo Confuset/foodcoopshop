@@ -206,6 +206,7 @@ class AppTable extends Table
 
         if (Configure::read('appDb.FCS_SELF_SERVICE_MODE_FOR_STOCK_PRODUCTS_ENABLED')) {
             $fields .= ", " . $this->getProductIdentifierField() . " as ProductIdentifier";
+            $fields .= ", Products.barcode";
         }
 
         $fields .= " ";
