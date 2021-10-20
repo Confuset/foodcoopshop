@@ -453,6 +453,7 @@ CREATE TABLE `fcs_product` (
   `description` longtext,
   `description_short` mediumtext,
   `unity` varchar(255) DEFAULT NULL,
+  `barcode` int(13) unsigned DEFAULT NULL,
   `is_declaration_ok` tinyint(4) unsigned NOT NULL DEFAULT '0',
   `is_stock_product` tinyint(4) unsigned NOT NULL DEFAULT '0',
   `active` int(1) NOT NULL DEFAULT '0',
